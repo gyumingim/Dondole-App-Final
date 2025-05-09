@@ -12,6 +12,7 @@ export const Container = styled.SafeAreaView`
 export const Header = styled.View`
   margin-top: ${theme.spacing.md}px;
   margin-bottom: ${theme.spacing.xl}px;
+  display: flex;
 `;
 
 export const Title = styled.Text`
@@ -258,6 +259,9 @@ export const MenuDescription = styled.Text`
 
 export const QuizContainer = styled.View`
   flex: 1;
+  background-color: ${theme.colors.white};
+  padding: ${theme.spacing.lg}px;
+  border-radius: ${theme.borderRadius.xl}px;
 `;
 
 export const QuestionContainer = styled.View`
@@ -272,28 +276,161 @@ export const QuestionNumber = styled.Text`
 `;
 
 export const QuestionText = styled.Text`
-  font-family: ${theme.fonts.regular};
+  font-family: ${theme.fonts.semiBold};
   font-size: ${theme.fontSizes.body}px;
   line-height: 26px;
 `;
 
 export const AnswersContainer = styled.View`
-  gap: ${theme.spacing.lg}px;
+  gap: ${theme.spacing.md}px;
 `;
 
 export const AnswerOption = styled.TouchableOpacity<{selected?: boolean}>`
-  background-color: ${({ selected } : { selected:any }) =>
-    selected ? theme.colors.primary + "22" : theme.colors.white};
-  border-radius: ${theme.borderRadius.sm}px;
+  background-color: ${theme.colors.background};
+  border-radius: ${theme.borderRadius.lg}px;
   padding: ${theme.spacing.md}px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  border: ${({ selected } : { selected:any }) =>
-    selected ? `1px solid ${theme.colors.primary}` : "none"};
+  ${({ selected }:{selected:any}) =>
+    selected ? `border: 1px ${theme.colors.primary}` : "border: none"};
 `;
 
 export const AnswerText = styled.Text`
   font-family: ${theme.fonts.regular};
   font-size: ${theme.fontSizes.body}px;
+`;
+export const BackButton = styled.Text`
+  marginRight: 10,
+`;
+// Calendar styled components
+export const CalendarHeader = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: ${theme.spacing.lg}px;
+`;
+
+export const CalendarTitle = styled.Text`
+  font-family: ${theme.fonts.bold};
+  font-size: ${theme.fontSizes.body}px;
+`;
+
+export const CalendarNavigation = styled.View`
+  flex-direction: row;
+  gap: ${theme.spacing.sm}px;
+`;
+
+export const WeekdaysContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-around;
+  margin-bottom: ${theme.spacing.md}px;
+`;
+
+export const Weekday = styled.Text`
+  width: 30px;
+  text-align: center;
+  font-family: ${theme.fonts.bold};
+  font-size: ${theme.fontSizes.small}px;
+  color: ${theme.colors.textLight};
+`;
+
+export const DaysContainer = styled.View`
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-bottom: ${theme.spacing.lg}px;
+`;
+
+export const DayButton = styled.TouchableOpacity`
+  width: 26px;
+  height: 22px;
+  justify-content: center;
+  align-items: center;
+  margin: ${theme.spacing.xs}px;
+`;
+
+export const SelectedDay = styled.View`
+  background-color: ${theme.colors.primary};
+  border-radius: 22px;
+  width: 42px;
+  height: 36px;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const DayText = styled.Text`
+  font-size: ${theme.fontSizes.body}px;
+`;
+
+export const SelectedDayText = styled.Text`
+  color: ${theme.colors.white};
+`;
+
+export const AddButton = styled.TouchableOpacity`
+  width: 40px;
+  height: 40px;
+  justify-content: center;
+  align-items: center;
+  background-color: ${theme.colors.background};
+  border-radius: 20px;
+  margin: ${theme.spacing.xs}px;
+`;
+
+export const SummaryContainer = styled.View`
+  margin-top: ${theme.spacing.lg}px;
+`;
+
+export const SummaryTitle = styled.Text`
+  font-family: ${theme.fonts.bold};
+  font-size: ${theme.fontSizes.body}px;
+  margin-bottom: ${theme.spacing.lg}px;
+`;
+
+export const TransactionContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: ${theme.spacing.lg}px;
+`;
+
+export const TransactionIconGray = styled.View`
+  width: 40px;
+  height: 40px;
+  border-radius: ${theme.borderRadius.sm}px;
+  background-color: ${theme.colors.background};
+  justify-content: center;
+  align-items: center;
+  margin-right: ${theme.spacing.md}px;
+`;
+
+export const TransactionIconBlue = styled.View`
+  width: 40px;
+  height: 40px;
+  border-radius: ${theme.borderRadius.sm}px;
+  background-color: ${theme.colors.primary};
+  justify-content: center;
+  align-items: center;
+  margin-right: ${theme.spacing.md}px;
+`;
+
+export const TransactionDetails = styled.View`
+  flex: 1;
+`;
+
+export const TransactionTitle = styled.Text`
+  font-family: ${theme.fonts.medium};
+  font-size: ${theme.fontSizes.body}px;
+  margin-bottom: ${theme.spacing.xs}px;
+`;
+
+export const TransactionAmount = styled.Text`
+  font-family: ${theme.fonts.regular};
+  font-size: ${theme.fontSizes.small}px;
+  color: ${theme.colors.textLight};
+`;
+
+export const DevelopedBy = styled.Text`
+  text-align: center;
+  color: ${theme.colors.textLight};
+  font-size: ${theme.fontSizes.small}px;
+  margin-bottom: ${theme.spacing.md}px;
 `;

@@ -35,11 +35,11 @@ export default function FinancialQuizScreen() {
   return (
     <Container>
       <Header>
-        <Ionicons name="chevron-back" size={24} color="#333" onPress={() => navigation.goBack()} />
+        {/* <Ionicons name="chevron-back" size={24} color="#333" onPress={() => navigation.goBack()} /> */}
         <Title>{`${question.date} 금융 퀴즈`}</Title>
+        <Subtitle>오늘의 오윤이 금융 문제를 풀어보세요.</Subtitle>
       </Header>
 
-      <Subtitle>오늘의 오윤이 금융 문제를 풀어보세요.</Subtitle>
 
       <QuizContainer>
         <QuestionContainer>
