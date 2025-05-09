@@ -38,6 +38,7 @@ export default function App() {
         "Pretend-Light": require("./assets/fonts/Pretendard-Light.otf"),
         "Pretend-SemiBold": require("./assets/fonts/Pretendard-SemiBold.otf"),
         "YClover-Bold": require("./assets/fonts/YClover-Bold.otf"),
+        "YClover-Regular" : require("./assets/fonts/YClover-Regular.otf"),
       });
       await SplashScreen.hideAsync();
       setLoaded(true);

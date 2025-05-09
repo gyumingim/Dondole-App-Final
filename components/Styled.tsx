@@ -165,16 +165,16 @@ export const HeaderCenter = styled.View`
 `;
 
 export const SubtitleSmall = styled.Text`
-  font-family: ${theme.fonts.regular};
+  font-family: ${theme.fonts.clovarRegular};
   font-size: ${theme.fontSizes.body}px;
   color: ${theme.colors.textLight};
-  margin-bottom: ${theme.spacing.sm}px;
+  margin-bottom: ${theme.spacing.xs}px;
   margin-top: ${theme.spacing.xxl}px;
 `;
 
 export const TitleLarge = styled.Text`
   font-family: ${theme.fonts.clovar};
-  font-size: 56px; /* 고정값 그대로 사용 */
+  font-size: 62px; /* 고정값 그대로 사용 */
   color: ${theme.colors.primary};
 `;
 
@@ -209,11 +209,11 @@ export const BalanceInfo = styled.View``;
 export const BalanceTitle = styled.Text`
   font-family: ${theme.fonts.bold};
   font-size: ${theme.fontSizes.title}px;
-  margin-bottom: ${theme.spacing.xs}px;
+  margin-bottom: ${theme.spacing.xxs}px;
 `;
 
 export const BalanceAmount = styled.Text`
-  font-family: ${theme.fonts.semiBold};
+  font-family: ${theme.fonts.medium};
   font-size: ${theme.fontSizes.amount}px;
 `;
 
@@ -224,7 +224,8 @@ export const MenuContainer = styled.View`
 export const MenuCard = styled.TouchableOpacity`
   background-color: ${theme.colors.white};
   border-radius: ${theme.borderRadius.lg}px;
-  padding: ${theme.spacing.lg}px;
+  padding-horizontal: ${theme.spacing.lg}px;
+  padding-vertical: ${theme.spacing.xl}px;
   flex-direction: row;
   align-items: center;
 `;
@@ -253,4 +254,46 @@ export const MenuDescription = styled.Text`
   font-family: ${theme.fonts.regular};
   font-size: ${theme.fontSizes.small}px;
   color: ${theme.colors.textLight};
+`;
+
+export const QuizContainer = styled.View`
+  flex: 1;
+`;
+
+export const QuestionContainer = styled.View`
+  margin-bottom: ${theme.spacing.xl}px;
+`;
+
+export const QuestionNumber = styled.Text`
+  font-family: ${theme.fonts.bold};
+  font-size: ${theme.fontSizes.body}px;
+  color: ${theme.colors.primary};
+  margin-bottom: ${theme.spacing.sm}px;
+`;
+
+export const QuestionText = styled.Text`
+  font-family: ${theme.fonts.regular};
+  font-size: ${theme.fontSizes.body}px;
+  line-height: 26px;
+`;
+
+export const AnswersContainer = styled.View`
+  gap: ${theme.spacing.lg}px;
+`;
+
+export const AnswerOption = styled.TouchableOpacity<{selected?: boolean}>`
+  background-color: ${({ selected } : { selected:any }) =>
+    selected ? theme.colors.primary + "22" : theme.colors.white};
+  border-radius: ${theme.borderRadius.sm}px;
+  padding: ${theme.spacing.md}px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border: ${({ selected } : { selected:any }) =>
+    selected ? `1px solid ${theme.colors.primary}` : "none"};
+`;
+
+export const AnswerText = styled.Text`
+  font-family: ${theme.fonts.regular};
+  font-size: ${theme.fontSizes.body}px;
 `;

@@ -17,7 +17,8 @@ export const theme = {
       light: "Pretend-Light",
       semiBold: "Pretend-SemiBold",
       thin: "Pretend-Thin",
-      clovar: "YClover-Bold"
+      clovar: "YClover-Bold",
+      clovarRegular: "YClover-Regular"
     },
     fontSizes: {
       title: 24,
