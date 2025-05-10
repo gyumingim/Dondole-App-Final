@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TouchableOpacity } from "react-native";
+import { FlatList, TouchableOpacity, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
   Container,
@@ -33,107 +33,85 @@ interface Props {
   navigation: any;
 }
 
-const DonationCalendarScreen: React.FC<Props> = ({ navigation }) => {
-  const [selectedDate, setSelectedDate] = useState<number>(15);
-  const days = Array.from({ length: 30 }, (_, i) => i + 1);
-  const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
+const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
+
+const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
+  const today = new Date();
+  const [currentMonth, setCurrentMonth] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
+  const [selectedDate, setSelectedDate] = useState(today.getDate());
+
+  // generate days array for current month
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+
+  const prevMonth = () => setCurrentMonth(new Date(year, month - 1, 1));
+  const nextMonth = () => setCurrentMonth(new Date(year, month + 1, 1));
 
   return (
     <Container>
       <Header>
-        <BackButton onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" size={24} color="#333" />
-        </BackButton>
-        <Title>고정 지출</Title>
-        <TouchableOpacity>
-          <Ionicons name="chevron-down" size={24} color="#333" />
-        </TouchableOpacity>
+      <Title>고정 지출</Title>
+      <Subtitle>고정 지출을 등록/확인하세요.</Subtitle>
       </Header>
 
-      <Subtitle>고정 지출을 등록/관리해요.</Subtitle>
-
       <CalendarHeader>
-        <CalendarTitle>2023년 11월</CalendarTitle>
+        <CalendarTitle>{`${year}년 ${month + 1}월`}</CalendarTitle>
         <CalendarNavigation>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={prevMonth}>
             <Ionicons name="chevron-back" size={20} color="#007BFF" />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={nextMonth}>
             <Ionicons name="chevron-forward" size={20} color="#007BFF" />
           </TouchableOpacity>
         </CalendarNavigation>
       </CalendarHeader>
 
       <WeekdaysContainer>
-        {weekdays.map((day, idx) => (
-          <Weekday key={idx}>{day}</Weekday>
+        {weekdays.map((day) => (
+          <Weekday key={day}>{day}</Weekday>
         ))}
       </WeekdaysContainer>
 
       <DaysContainer>
-        {days.map((day) =>
+        {daysArray.map((day) => (
           selectedDate === day ? (
-            <SelectedDay key={day} onPress={() => setSelectedDate(day)}>
+            <SelectedDay key={day} onPress={() => navigation.navigate('DonationRegistration')}>
               <SelectedDayText>{day}</SelectedDayText>
             </SelectedDay>
           ) : (
-            <DayButton key={day} onPress={() => setSelectedDate(day)}>
+            <DayButton key={day} onPress={() => {navigation.navigate('DonationRegistration'); setSelectedDate(day);}}>
               <DayText>{day}</DayText>
             </DayButton>
           )
-        )}
-        <AddButton onPress={() => {/* open add modal */}}>
-          <Ionicons name="add" size={24} color="#007BFF" />
-        </AddButton>
+        ))}
       </DaysContainer>
 
       <SummaryContainer>
-        <SummaryTitle>오늘의 고정 지출: 12000원</SummaryTitle>
-
+        <SummaryTitle>오늘의 고정 지출 총 12000원</SummaryTitle>
         <TransactionContainer>
           <TransactionIconGray>
-            <Ionicons name="list" size={20} color="#999" />
+            <Ionicons name="medkit" size={20} color="#999" />
           </TransactionIconGray>
           <TransactionDetails>
             <TransactionTitle>병원</TransactionTitle>
             <TransactionAmount>약 4000원</TransactionAmount>
           </TransactionDetails>
         </TransactionContainer>
-
         <TransactionContainer>
           <TransactionIconBlue>
-            <Ionicons name="wallet" size={20} color="#fff" />
+            <Ionicons name="save" size={20} color="#fff" />
           </TransactionIconBlue>
           <TransactionDetails>
             <TransactionTitle>저금</TransactionTitle>
             <TransactionAmount>12000원</TransactionAmount>
           </TransactionDetails>
         </TransactionContainer>
-
-        <TransactionContainer>
-          <TransactionIconGray>
-            <Ionicons name="fast-food" size={20} color="#999" />
-          </TransactionIconGray>
-          <TransactionDetails>
-            <TransactionTitle>용돈이야 걱어 사먹에서 놀기</TransactionTitle>
-            <TransactionAmount>약 4000원</TransactionAmount>
-          </TransactionDetails>
-        </TransactionContainer>
-
-        <TransactionContainer>
-          <TransactionIconBlue>
-            <Ionicons name="card" size={20} color="#fff" />
-          </TransactionIconBlue>
-          <TransactionDetails>
-            <TransactionTitle>체육대회 편지 쓰기 금액</TransactionTitle>
-            <TransactionAmount>12000원</TransactionAmount>
-          </TransactionDetails>
-        </TransactionContainer>
+        {/* 추가 내역 반복 렌더 */}
       </SummaryContainer>
-
-      <DevelopedBy>Developed by Oh yun chan</DevelopedBy>
     </Container>
   );
 };
 
-export default DonationCalendarScreen;
+export default ExpenseCalendarScreen;

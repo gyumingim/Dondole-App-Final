@@ -73,7 +73,7 @@ export default function LoginScreen({ navigation }: any) {
           </Button>
           <FooterRow>
           <FooterText>아직 회원이 아니신가요?</FooterText>
-          <FooterLink onPress={() => navigation.navigate("Signup")}>
+          <FooterLink onPress={() => navigation.navigate("Start")}>
             회원가입하기
           </FooterLink>
         </FooterRow>

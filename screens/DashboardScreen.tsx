@@ -38,7 +38,7 @@ export default function DashboardScreen({ navigation }: { navigation: any }) {
         </Header>
 
         <MenuContainer>
-          <MenuCard onPress={() => navigation.navigate("DonationRegistration")}>  
+          <MenuCard onPress={() => navigation.navigate("DonationCalendar")}>  
             <MenuIconContainer>
               <FontAwesome5 name="hand-holding-heart" size={24} color="#4CAF50" />
             </MenuIconContainer>
@@ -48,7 +48,7 @@ export default function DashboardScreen({ navigation }: { navigation: any }) {
             </MenuTextContainer>
           </MenuCard>
 
-          <MenuCard onPress={() => navigation.navigate("ExpenseRegistration")}>  
+          <MenuCard onPress={() => navigation.navigate("ExpenseCalendar")}>  
             <MenuIconContainer>
               <FontAwesome5 name="shopping-bag" size={24} color="#FF9800" />
             </MenuIconContainer>

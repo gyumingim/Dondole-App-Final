@@ -52,8 +52,9 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <Container>
       <Header>
-        <Title>고정 지출</Title>
-        <Subtitle>고정 지출을 등록/확인하세요.</Subtitle>
+        <Title>오늘의 소비</Title>
+        <Subtitle>오늘의 소비를 등록/확인하세요.</Subtitle>
+
       </Header>
 
       <CalendarHeader>
@@ -77,11 +78,11 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
       <DaysContainer>
         {daysArray.map((day) =>
           selectedDate === day ? (
-            <SelectedDay key={day} onPress={() => setSelectedDate(day)}>
+            <SelectedDay key={day} onPress={() => navigation.navigate('ExpenseRegistration')}>
               <SelectedDayText>{day}</SelectedDayText>
             </SelectedDay>
           ) : (
-            <DayButton key={day} onPress={() => setSelectedDate(day)}>
+            <DayButton key={day} onPress={() => {navigation.navigate('ExpenseRegistration');setSelectedDate(day)}}>
               <DayText>{day}</DayText>
             </DayButton>
           )
@@ -110,8 +111,6 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
         </TransactionContainer>
         {/* 추가 내역 반복 렌더 */}
       </SummaryContainer>
-
-      <DevelopedBy>Developed by Oh yun chan</DevelopedBy>
     </Container>
   );
 };

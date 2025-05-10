@@ -167,9 +167,9 @@ export const HeaderCenter = styled.View`
 
 export const SubtitleSmall = styled.Text`
   font-family: ${theme.fonts.clovarRegular};
-  font-size: ${theme.fontSizes.body}px;
+  font-size: ${theme.fontSizes.subtitle}px;
   color: ${theme.colors.textLight};
-  margin-bottom: ${theme.spacing.xs}px;
+  margin-bottom: ${theme.spacing.xxs}px;
   margin-top: ${theme.spacing.xxl}px;
 `;
 

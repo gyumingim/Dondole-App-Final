@@ -1,5 +1,5 @@
 // src/screens/StartScreen.tsx
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
@@ -38,6 +38,8 @@ export default function StartScreen({ navigation }: { navigation: any }) {
     return null;
   }
 
+  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+
   return (
     <Container onLayout={onLayoutRootView}>
       <Header>
@@ -46,7 +48,10 @@ export default function StartScreen({ navigation }: { navigation: any }) {
       </Header>
 
       <OptionsContainer>
-        <OptionCard onPress={() => navigation.navigate("Signup")}>  
+        <OptionCard
+          onPress={() => setSelectedRole("user")}
+          style={{ borderColor: selectedRole === "user" ? "#007BFF" : "#eee", borderWidth: 2 }}
+        >
           <OptionContent>
             <View>
               <OptionTitle>사용자로 가입하기</OptionTitle>
@@ -60,7 +65,10 @@ export default function StartScreen({ navigation }: { navigation: any }) {
           </OptionContent>
         </OptionCard>
 
-        <OptionCard onPress={() => navigation.navigate("Signup")}>  
+        <OptionCard
+          onPress={() => setSelectedRole("parent")}
+          style={{ borderColor: selectedRole === "parent" ? "#007BFF" : "#eee", borderWidth: 2 }}
+        >
           <OptionContent>
             <View>
               <OptionTitle>보호자로 가입하기</OptionTitle>
@@ -75,16 +83,22 @@ export default function StartScreen({ navigation }: { navigation: any }) {
         </OptionCard>
       </OptionsContainer>
 
-      <Button onPress={() => navigation.navigate("Login")}>  
+      <Button
+        onPress={() => {
+          if (selectedRole) navigation.navigate("Signup", { role: selectedRole });
+        }}
+        disabled={!selectedRole}
+        style={{ opacity: selectedRole ? 1 : 0.5 }}
+      >
         <ButtonText>다음으로</ButtonText>
       </Button>
 
-      <Footer>
+      {/* <Footer>
           <FooterText>아직 회원이 아니신가요?</FooterText>
           <FooterLink onPress={() => navigation.navigate("Signup")}>
             회원가입하기
           </FooterLink>
-      </Footer>
+      </Footer> */}
     </Container>
   );
 }
