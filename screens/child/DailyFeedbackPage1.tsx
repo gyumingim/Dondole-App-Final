@@ -96,7 +96,7 @@ export default function DailyFeedbackPage1({ navigation, route }: { navigation: 
                   color: '#007BFF',
                   marginBottom: 16
                 }}>
-                  {feedback.averageEmotion} (점수: {feedback.score}점)
+                  {feedback.averageEmotion}
                 </Text>
                 
                 <Text style={{ 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome5, MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
@@ -20,8 +20,47 @@ import {
   Button,
   ButtonText,
 } from "../../components/Styled";
+import { api } from "../../utils/api";
+
+interface UserInfo {
+  id: number;
+  name: string;
+  level: string;
+  age: number;
+  role: string;
+  assets: number;
+  expectedAssets: number;
+}
 
 export default function ChildDashboardScreen({ navigation }: { navigation: any }) {
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get("/users/mine");
+        setUserInfo(response.data);
+      } catch (error) {
+        console.error("사용자 정보 조회 실패", error);
+        // 에러 시 기본값 설정
+        setUserInfo({
+          id: 0,
+          name: "사용자",
+          level: "",
+          age: 0,
+          role: "USER",
+          assets: 0,
+          expectedAssets: 0
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserInfo();
+  }, []);
+
   return (
     <Container>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -32,8 +71,12 @@ export default function ChildDashboardScreen({ navigation }: { navigation: any }
                 source={require("../../assets/piggy.png")}
               />
               <BalanceInfo>
-                <BalanceTitle>오윤찬님의 잔여금액</BalanceTitle>
-                <BalanceAmount>50,423원</BalanceAmount>
+                <BalanceTitle>
+                  {loading ? "불러오는 중..." : `${userInfo?.name || "사용자"}님의 잔여금액`}
+                </BalanceTitle>
+                <BalanceAmount>
+                  {loading ? "..." : `${(userInfo?.expectedAssets || 0).toLocaleString()}원`}
+                </BalanceAmount>
               </BalanceInfo>
             </BalanceHeader>
           </BalanceContainer>

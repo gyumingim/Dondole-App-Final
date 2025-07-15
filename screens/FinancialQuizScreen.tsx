@@ -17,7 +17,7 @@ import {
   Button,
   ButtonText
 } from "@/components/Styled"
-import { fetchQuizzes, submitQuizAnswer } from "../utils/api";
+import { fetchQuizzes, submitQuizAnswer, api } from "../utils/api";
 
 export default function FinancialQuizScreen() {
   const navigation = useNavigation()
@@ -31,14 +31,15 @@ export default function FinancialQuizScreen() {
     const loadQuiz = async () => {
       try {
         const data = await fetchQuizzes();
-        const first = data.find(q => q.id === 0) || data[0];
-        if (first) {
+        // 가장 큰 id를 가진 퀴즈 선택 (최신 퀴즈)
+        const latest = data.reduce((prev, current) => (prev.id > current.id) ? prev : current, data[0]);
+        if (latest) {
           setQuestion({
-            id: first.id,
-            text: first.question,
-            options: [first.choice1, first.choice2, first.choice3, first.choice4],
-            answer: first.answer,
-            feedback: first.feedback
+            id: latest.id,
+            text: latest.question,
+            options: [latest.choice1, latest.choice2, latest.choice3, latest.choice4],
+            answer: latest.answer,
+            feedback: latest.feedback
           });
         }
       } catch (e) {
@@ -85,6 +86,15 @@ export default function FinancialQuizScreen() {
           if (!question || selectedAnswer === null) return;
           try {
             const result = await submitQuizAnswer({ id: question.id, userAnswer: selectedAnswer + 1 });
+            
+            // 퀴즈 제출 후 새로운 퀴즈 생성 API 호출
+            try {
+              await api.post("/ai/quiz", {});
+              console.log("새로운 퀴즈 생성 요청 완료");
+            } catch (quizGenError) {
+              console.error("퀴즈 생성 API 호출 실패:", quizGenError);
+            }
+            
             if (result.isCorrected) {
               Alert.alert("정답입니다!", "잘했어요!", [
                 { text: "확인", onPress: () => navigation.navigate("Dashboard" as never) },

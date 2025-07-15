@@ -117,22 +117,6 @@ export default function ParentSignupScreen({ navigation }: any) {
             </PasswordContainer>
           </InputContainer>
 
-          <InputContainer>
-            <Label>사용자 아이디 연동</Label>
-            <Input
-              placeholder="아이디를 입력해주세요."
-              editable={false}
-            />
-            <FooterLink 
-              style={{ alignSelf: 'flex-end', marginTop: 8 }}
-              onPress={() => {
-                // TODO: 자녀 아이디 연동 로직
-                Alert.alert("준비중", "자녀 아이디 연동 기능은 준비중입니다.");
-              }}
-            >
-              연동
-            </FooterLink>
-          </InputContainer>
         </Form>
 
         <Button onPress={handleSignup} disabled={loading}>
