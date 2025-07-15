@@ -6,19 +6,19 @@ import { NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { StatusBar } from "expo-status-bar"
 import { SafeAreaProvider } from "react-native-safe-area-context"
-import { ThemeProvider } from "styled-components/native";
-import { theme } from "./components/theme";
+import { initAuth } from "./utils/api";
 
 // Screens
 import StartScreen from "./screens/StartScreen"
 import LoginScreen from "./screens/LoginScreen"
 import SignupScreen from "./screens/SignupScreen"
 import DashboardScreen from "./screens/DashboardScreen"
-import ExpenseRegistrationScreen from "./screens/ExpenseRegistrationScreen"
-import ExpenseCalendarScreen from "./screens/ExpenseCalendarScreen"
+import ExpenseRegistrationScreen from "./screens/TodayRegistrationScreen"
+import ExpenseCalendarScreen from "./screens/TodayCalendarScreen"
 import FinancialQuizScreen from "./screens/FinancialQuizScreen"
 import DonationRegistrationScreen from "./screens/DonationRegistrationScreen"
 import DonationCalendarScreen from "./screens/DonationCalendarScreen"
+import QuizFeedbackScreen from "./screens/QuizFeedbackScreen"
 
 const Stack = createNativeStackNavigator()
 
@@ -28,6 +28,8 @@ export default function App() {
 
   useEffect(() => {
     async function loadAssets() {
+
+      await initAuth();
       await Font.loadAsync({
         "Pretend-Regular": require("./assets/fonts/Pretendard-Regular.otf"),
         "Pretend-Medium": require("./assets/fonts/Pretendard-Medium.otf"),
@@ -49,7 +51,6 @@ export default function App() {
   if (!loaded) return null;
 
   return (
-    <ThemeProvider theme={theme}>
       <SafeAreaProvider>
         <NavigationContainer>
           <StatusBar style="auto" />
@@ -69,9 +70,9 @@ export default function App() {
             <Stack.Screen name="FinancialQuiz" component={FinancialQuizScreen} />
             <Stack.Screen name="DonationRegistration" component={DonationRegistrationScreen} />
             <Stack.Screen name="DonationCalendar" component={DonationCalendarScreen} />
+            <Stack.Screen name="QuizFeedback" component={QuizFeedbackScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>
-    </ThemeProvider>
   )
 }

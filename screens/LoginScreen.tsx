@@ -23,11 +23,34 @@ import {
   FooterLink,
   Space
 } from "../components/Styled";
+import { login } from "../utils/api";
 
 export default function LoginScreen({ navigation }: any) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const handleLogin = async () => {
+    if (!username || !password) {
+      setError(true);
+      return;
+    }
+    try {
+      setLoading(true);
+      const response = await login({ username, password });
+      if (response.status === 200) {
+        navigation.navigate("Dashboard");
+      } else {
+        setError(true);
+      }
+    } catch (e) {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Container>
@@ -68,9 +91,10 @@ export default function LoginScreen({ navigation }: any) {
 
           <Space />
 
-          <Button onPress={() => navigation.navigate("Dashboard")}>
+          <Button onPress={handleLogin} disabled={loading}>
             <ButtonText>로그인 하기</ButtonText>
           </Button>
+          {error && (<FooterText style={{color: 'red'}}>로그인 실패. 아이디/비밀번호를 확인하세요.</FooterText>)}
           <FooterRow>
           <FooterText>아직 회원이 아니신가요?</FooterText>
           <FooterLink onPress={() => navigation.navigate("Start")}>

@@ -1,41 +1,40 @@
-import styled from "styled-components/native";
-import { theme } from "./theme";
+import styled from "@emotion/native";
 
 export const Container = styled.SafeAreaView`
   flex: 1;
-  background-color: ${theme.colors.background};
-  padding: ${theme.spacing.xl}px;
-  padding-top: ${theme.spacing.xxxl}px;
+  background-color: #f5f5f5;
+  padding: 30px;
+  padding-top: 80px;
   justify-content: space-between;
 `;
 
 export const Header = styled.View`
-  margin-top: ${theme.spacing.md}px;
-  margin-bottom: ${theme.spacing.xl}px;
+  margin-top: 16px;
+  margin-bottom: 30px;
   display: flex;
 `;
 
 export const Title = styled.Text`
-  font-family: ${theme.fonts.bold};
-  font-size: ${theme.fontSizes.title}px;
-  margin-bottom: ${theme.spacing.xs}px;
+  font-family: Pretend-Bold;
+  font-size: 24px;
+  margin-bottom: 8px;
 `;
 
 export const Subtitle = styled.Text`
-  font-family: ${theme.fonts.regular};
-  font-size: ${theme.fontSizes.subtitle}px;
-  color: ${theme.colors.textLight};
+  font-family: Pretend-Regular;
+  font-size: 12px;
+  color: #666;
 `;
 
 export const OptionsContainer = styled.View`
   flex: 1;
-  gap: ${theme.spacing.sm}px;
+  gap: 12px;
 `;
 
 export const OptionCard = styled.TouchableOpacity`
-  background-color: ${theme.colors.white};
-  border-radius: ${theme.borderRadius.sm}px;
-  padding: ${theme.spacing.md}px;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 16px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -50,15 +49,15 @@ export const OptionContent = styled.View`
 `;
 
 export const OptionTitle = styled.Text`
-  font-family: ${theme.fonts.medium};
-  font-size: ${theme.fontSizes.body}px;
-  margin-bottom: ${theme.spacing.sm}px;
+  font-family: Pretend-Medium;
+  font-size: 14px;
+  margin-bottom: 12px;
 `;
 
 export const OptionDescription = styled.Text`
-  font-family: ${theme.fonts.medium};
-  font-size: ${theme.fontSizes.small}px;
-  color: ${theme.colors.textLight};
+  font-family: Pretend-Medium;
+  font-size: 10px;
+  color: #666;
   line-height: 16px;
 `;
 
@@ -69,17 +68,18 @@ export const Emoji = styled.Image`
 `;
 
 export const Button = styled.TouchableOpacity`
-  background-color: ${theme.colors.primary};
-  border-radius: ${theme.borderRadius.md}px;
-  padding: ${theme.spacing.sm}px;
+  background-color: #007BFF;
+  border-radius: 12px;
+  padding: 12px;
   align-items: center;
-  margin-vertical: ${theme.spacing.sm}px;
+  margin-top: 12px;
+  margin-bottom: 12px;
 `;
 
 export const ButtonText = styled.Text`
-  color: ${theme.colors.white};
-  font-size: ${theme.fontSizes.body}px;
-  font-family: ${theme.fonts.medium};
+  color: #fff;
+  font-size: 14px;
+  font-family: Pretend-Medium;
 `;
 
 export const Footer = styled.View`
@@ -88,110 +88,110 @@ export const Footer = styled.View`
 `;
 
 export const FooterText = styled.Text`
-  color: ${theme.colors.textLight};
-  font-size: ${theme.fontSizes.small}px;
+  color: #666;
+  font-size: 10px;
 `;
 
 export const FooterLink = styled.Text`
-  color: ${theme.colors.primary};
-  font-size: ${theme.fontSizes.small}px;
-  font-family: ${theme.fonts.medium};
-  margin-left: ${theme.spacing.xs}px;
+  color: #007BFF;
+  font-size: 10px;
+  font-family: Pretend-Medium;
+  margin-left: 8px;
 `;
 
 export const Form = styled.View`
-  margin-bottom: ${theme.spacing.xl}px;
+  margin-bottom: 30px;
 `;
 
 export const InputContainer = styled.View`
-  margin-bottom: ${theme.spacing.lg}px;
+  margin-bottom: 20px;
 `;
 
 export const Label = styled.Text`
-  font-family: ${theme.fonts.medium};
-  font-size: ${theme.fontSizes.subtitle}px;
-  color: ${theme.colors.textDark};
-  margin-bottom: ${theme.spacing.xs}px;
+  font-family: Pretend-Medium;
+  font-size: 12px;
+  color: #333;
+  margin-bottom: 8px;
 `;
 
 export const Input = styled.TextInput`
-  background-color: ${theme.colors.white};
-  border-radius: ${theme.borderRadius.md}px;
-  padding: ${theme.spacing.md}px;
-  font-size: ${theme.fontSizes.subtitle}px;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 12px;
 `;
 
 export const PasswordContainer = styled.View`
   flex-direction: row;
-  background-color: ${theme.colors.white};
-  border-radius: ${theme.borderRadius.md}px;
+  background-color: #fff;
+  border-radius: 12px;
   align-items: center;
 `;
 
 export const PasswordInput = styled.TextInput`
   flex: 1;
-  padding: ${theme.spacing.md}px;
-  font-size: ${theme.fontSizes.subtitle}px;
+  padding: 16px;
+  font-size: 12px;
 `;
 
 export const EyeIcon = styled.TouchableOpacity`
-  padding: ${theme.spacing.sm}px;
+  padding: 12px;
 `;
 
 export const DropdownContainer = styled.TouchableOpacity`
-  background-color: ${theme.colors.white};
-  border-radius: ${theme.borderRadius.md}px;
-  padding: ${theme.spacing.md}px;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 16px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 `;
 
 export const DropdownText = styled.Text`
-  font-family: ${theme.fonts.regular};
-  font-size: ${theme.fontSizes.subtitle}px;
-  color: ${theme.colors.textLight};
+  font-family: Pretend-Regular;
+  font-size: 12px;
+  color: #666;
 `;
 
 export const ErrorText = styled.Text`
   color: red;
-  font-size: ${theme.fontSizes.small}px;
-  margin-top: ${theme.spacing.xs}px;
+  font-size: 10px;
+  margin-top: 8px;
 `;
 
 export const HeaderCenter = styled.View`
   align-items: center;
-  margin-top: ${theme.spacing.xl}px;
-  margin-bottom: ${theme.spacing.xl}px;
+  margin-top: 30px;
+  margin-bottom: 30px;
 `;
 
 export const SubtitleSmall = styled.Text`
-  font-family: ${theme.fonts.clovarRegular};
-  font-size: ${theme.fontSizes.subtitle}px;
-  color: ${theme.colors.textLight};
-  margin-bottom: ${theme.spacing.xxs}px;
-  margin-top: ${theme.spacing.xxl}px;
+  font-family: YClover-Regular;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+  margin-top: 40px;
 `;
 
 export const TitleLarge = styled.Text`
-  font-family: ${theme.fonts.clovar};
+  font-family: YClover-Bold;
   font-size: 62px; /* 고정값 그대로 사용 */
-  color: ${theme.colors.primary};
+  color: #007BFF;
 `;
 
 export const FooterRow = styled.View`
   flex-direction: row;
   justify-content: center;
-  margin-bottom: ${theme.spacing.lg}px;
+  margin-bottom: 20px;
 `;
 
 export const Space = styled.View`
-  height: ${theme.spacing.xxxl}px;
+  height: 80px;
 `;
 
 export const BalanceContainer = styled.View`
-  border-radius: ${theme.borderRadius.md}px;
-  padding: ${theme.spacing.lg}px;
+  border-radius: 12px;
+  padding: 20px;
 `;
 
 export const BalanceHeader = styled.View`
@@ -202,31 +202,33 @@ export const BalanceHeader = styled.View`
 export const PiggyBank = styled.Image`
   width: 50px;
   height: 70px;
-  margin-right: ${theme.spacing.md}px;
+  margin-right: 16px;
 `;
 
 export const BalanceInfo = styled.View``;
 
 export const BalanceTitle = styled.Text`
-  font-family: ${theme.fonts.bold};
-  font-size: ${theme.fontSizes.title}px;
-  margin-bottom: ${theme.spacing.xxs}px;
+  font-family: Pretend-Bold;
+  font-size: 24px;
+  margin-bottom: 4px;
 `;
 
 export const BalanceAmount = styled.Text`
-  font-family: ${theme.fonts.medium};
-  font-size: ${theme.fontSizes.amount}px;
+  font-family: Pretend-Medium;
+  font-size: 18px;
 `;
 
 export const MenuContainer = styled.View`
-  gap: ${theme.spacing.md}px;
+  gap: 16px;
 `;
 
 export const MenuCard = styled.TouchableOpacity`
-  background-color: ${theme.colors.white};
-  border-radius: ${theme.borderRadius.lg}px;
-  padding-horizontal: ${theme.spacing.lg}px;
-  padding-vertical: ${theme.spacing.xl}px;
+  background-color: #fff;
+  border-radius: 16px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 30px;
+  padding-bottom: 30px;
   flex-direction: row;
   align-items: center;
 `;
@@ -235,10 +237,10 @@ export const MenuIconContainer = styled.View`
   width: 50px;
   height: 50px;
   border-radius: 25px;
-  background-color: ${theme.colors.background};
+  background-color: #f5f5f5;
   justify-content: center;
   align-items: center;
-  margin-right: ${theme.spacing.md}px;
+  margin-right: 16px;
 `;
 
 export const MenuTextContainer = styled.View`
@@ -246,59 +248,59 @@ export const MenuTextContainer = styled.View`
 `;
 
 export const MenuTitle = styled.Text`
-  font-family: ${theme.fonts.medium};
-  font-size: ${theme.fontSizes.body}px;
-  margin-bottom: ${theme.spacing.xxs}px;
+  font-family: Pretend-Medium;
+  font-size: 14px;
+  margin-bottom: 4px;
 `;
 
 export const MenuDescription = styled.Text`
-  font-family: ${theme.fonts.regular};
-  font-size: ${theme.fontSizes.small}px;
-  color: ${theme.colors.textLight};
+  font-family: Pretend-Regular;
+  font-size: 10px;
+  color: #666;
 `;
 
 export const QuizContainer = styled.View`
   flex: 1;
-  background-color: ${theme.colors.white};
-  padding: ${theme.spacing.lg}px;
-  border-radius: ${theme.borderRadius.xl}px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 20px;
 `;
 
 export const QuestionContainer = styled.View`
-  margin-bottom: ${theme.spacing.xl}px;
+  margin-bottom: 30px;
 `;
 
 export const QuestionNumber = styled.Text`
-  font-family: ${theme.fonts.bold};
-  font-size: ${theme.fontSizes.body}px;
-  color: ${theme.colors.primary};
-  margin-bottom: ${theme.spacing.sm}px;
+  font-family: Pretend-Bold;
+  font-size: 14px;
+  color: #007BFF;
+  margin-bottom: 12px;
 `;
 
 export const QuestionText = styled.Text`
-  font-family: ${theme.fonts.semiBold};
-  font-size: ${theme.fontSizes.body}px;
+  font-family: Pretend-SemiBold;
+  font-size: 14px;
   line-height: 26px;
 `;
 
 export const AnswersContainer = styled.View`
-  gap: ${theme.spacing.md}px;
+  gap: 16px;
 `;
 
 export const AnswerOption = styled.TouchableOpacity<{selected?: boolean}>`
-  background-color: ${theme.colors.background};
-  border-radius: ${theme.borderRadius.lg}px;
-  padding: ${theme.spacing.md}px;
+  background-color: #f5f5f5;
+  border-radius: 16px;
+  padding: 16px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  ${({ selected }:{selected:any}) =>
-    selected ? `border: 1px ${theme.colors.primary}` : "border: none"};
+  ${(props: {selected?: boolean}) =>
+    props.selected ? `border: 1px solid #007BFF;` : "border: 1px solid transparent;"};
 `;
 
 export const AnswerText = styled.Text`
-  font-family: ${theme.fonts.regular};
-  font-size: ${theme.fontSizes.body}px;
+  font-family: Pretend-Regular;
+  font-size: 14px;
 `;
 export const BackButton = styled.Text`
   marginRight: 10,
@@ -308,37 +310,37 @@ export const CalendarHeader = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: ${theme.spacing.lg}px;
+  margin-bottom: 20px;
 `;
 
 export const CalendarTitle = styled.Text`
-  font-family: ${theme.fonts.bold};
-  font-size: ${theme.fontSizes.body}px;
+  font-family: Pretend-Bold;
+  font-size: 14px;
 `;
 
 export const CalendarNavigation = styled.View`
   flex-direction: row;
-  gap: ${theme.spacing.sm}px;
+  gap: 12px;
 `;
 
 export const WeekdaysContainer = styled.View`
   flex-direction: row;
   justify-content: space-around;
-  margin-bottom: ${theme.spacing.md}px;
+  margin-bottom: 16px;
 `;
 
 export const Weekday = styled.Text`
   width: 30px;
-  text-align: center;
-  font-family: ${theme.fonts.bold};
-  font-size: ${theme.fontSizes.small}px;
-  color: ${theme.colors.textLight};
+  textAlign: center;
+  font-family: Pretend-Bold;
+  font-size: 10px;
+  color: #666;
 `;
 
 export const DaysContainer = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
-  margin-bottom: ${theme.spacing.lg}px;
+  margin-bottom: 20px;
 `;
 
 export const DayButton = styled.TouchableOpacity`
@@ -346,11 +348,19 @@ export const DayButton = styled.TouchableOpacity`
   height: 22px;
   justify-content: center;
   align-items: center;
-  margin: ${theme.spacing.xs}px;
+  margin: 8px;
 `;
 
-export const SelectedDay = styled.View`
-  background-color: ${theme.colors.primary};
+export const BlankDay = styled.View`
+  width: 26px;
+  height: 22px;
+  justify-content: center;
+  align-items: center;
+  margin: 8px;
+`;
+
+export const SelectedDay = styled.TouchableOpacity`
+  background-color: #007BFF;
   border-radius: 22px;
   width: 42px;
   height: 36px;
@@ -359,11 +369,11 @@ export const SelectedDay = styled.View`
 `;
 
 export const DayText = styled.Text`
-  font-size: ${theme.fontSizes.body}px;
+  font-size: 14px;
 `;
 
 export const SelectedDayText = styled.Text`
-  color: ${theme.colors.white};
+  color: #fff;
 `;
 
 export const AddButton = styled.TouchableOpacity`
@@ -371,45 +381,45 @@ export const AddButton = styled.TouchableOpacity`
   height: 40px;
   justify-content: center;
   align-items: center;
-  background-color: ${theme.colors.background};
+  background-color: #f5f5f5;
   border-radius: 20px;
-  margin: ${theme.spacing.xs}px;
+  margin: 8px;
 `;
 
 export const SummaryContainer = styled.View`
-  margin-top: ${theme.spacing.lg}px;
+  margin-top: 20px;
 `;
 
 export const SummaryTitle = styled.Text`
-  font-family: ${theme.fonts.bold};
-  font-size: ${theme.fontSizes.body}px;
-  margin-bottom: ${theme.spacing.lg}px;
+  font-family: Pretend-Bold;
+  font-size: 14px;
+  margin-bottom: 20px;
 `;
 
 export const TransactionContainer = styled.View`
   flex-direction: row;
   align-items: center;
-  margin-bottom: ${theme.spacing.lg}px;
+  margin-bottom: 20px;
 `;
 
 export const TransactionIconGray = styled.View`
   width: 40px;
   height: 40px;
-  border-radius: ${theme.borderRadius.sm}px;
-  background-color: ${theme.colors.background};
+  border-radius: 8px;
+  background-color: #f5f5f5;
   justify-content: center;
   align-items: center;
-  margin-right: ${theme.spacing.md}px;
+  margin-right: 16px;
 `;
 
 export const TransactionIconBlue = styled.View`
   width: 40px;
   height: 40px;
-  border-radius: ${theme.borderRadius.sm}px;
-  background-color: ${theme.colors.primary};
+  border-radius: 8px;
+  background-color: #007BFF;
   justify-content: center;
   align-items: center;
-  margin-right: ${theme.spacing.md}px;
+  margin-right: 16px;
 `;
 
 export const TransactionDetails = styled.View`
@@ -417,20 +427,20 @@ export const TransactionDetails = styled.View`
 `;
 
 export const TransactionTitle = styled.Text`
-  font-family: ${theme.fonts.medium};
-  font-size: ${theme.fontSizes.body}px;
-  margin-bottom: ${theme.spacing.xs}px;
+  font-family: Pretend-Medium;
+  font-size: 14px;
+  margin-bottom: 8px;
 `;
 
 export const TransactionAmount = styled.Text`
-  font-family: ${theme.fonts.regular};
-  font-size: ${theme.fontSizes.small}px;
-  color: ${theme.colors.textLight};
+  font-family: Pretend-Regular;
+  font-size: 10px;
+  color: #666;
 `;
 
 export const DevelopedBy = styled.Text`
-  text-align: center;
-  color: ${theme.colors.textLight};
-  font-size: ${theme.fontSizes.small}px;
-  margin-bottom: ${theme.spacing.md}px;
+  textAlign: center;
+  color: #666;
+  font-size: 10px;
+  margin-bottom: 16px;
 `;
