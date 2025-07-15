@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, TouchableOpacity, View, Text } from "react-native";
+import { ScrollView, TouchableOpacity, View, Text, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
   Container,
@@ -33,42 +33,11 @@ export default function DailyFeedbackPage2({ navigation, route }: { navigation: 
 
         <MenuContainer>
           <QuizContainer style={{ padding: 40, alignItems: 'center', justifyContent: 'center', minHeight: 400 }}>
-            <View style={{ 
-              width: 80, 
-              height: 80, 
-              backgroundColor: '#f0f0f0', 
-              borderRadius: 40, 
-              marginBottom: 32,
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <View style={{ 
-                width: 40, 
-                height: 40, 
-                backgroundColor: '#ddd', 
-                borderRadius: 20,
-                position: 'relative'
-              }}>
-                <View style={{ 
-                  width: 12, 
-                  height: 12, 
-                  backgroundColor: '#ff6b6b', 
-                  borderRadius: 6,
-                  position: 'absolute',
-                  top: -6,
-                  right: -6
-                }} />
-                <View style={{ 
-                  width: 8, 
-                  height: 8, 
-                  backgroundColor: '#4ecdc4', 
-                  borderRadius: 4,
-                  position: 'absolute',
-                  bottom: -4,
-                  left: -4
-                }} />
-              </View>
-            </View>
+            <Image 
+              source={require("../../assets/advice.png")} 
+              style={{ width: 80, height: 80, marginBottom: 32 }} 
+              resizeMode="contain"
+            />
             
             <Text style={{ 
               fontSize: 24, 
