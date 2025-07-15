@@ -41,7 +41,12 @@ export default function LoginScreen({ navigation }: any) {
       setLoading(true);
       const response = await login({ username, password });
       if (response.status === 200) {
-        navigation.navigate("Dashboard");
+        // 역할에 따라 다른 화면으로 라우팅
+        if (response.userRole === "PARENT") {
+          navigation.navigate("ParentChildSelection");
+        } else {
+          navigation.navigate("Dashboard"); // 자녀는 바로 대시보드로
+        }
       } else {
         setError(true);
       }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FlatList, TouchableOpacity, Text, View } from "react-native";
+import { FlatList, TouchableOpacity, Text, View, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
   Container,
@@ -36,11 +36,12 @@ interface Props {
 }
 
 interface FixedExpense {
+  content: string;
+  date: string;
+  emotion: number;
   id: number;
-  title: string;
-  amount: number;
-  category: string;
-  date: string; // ISO date string (YYYY-MM-DD)
+  price: number;
+  thought: string;
 }
 
 const weekdays = ["월", "화", "수", "목", "금", "토", "일"];
@@ -71,12 +72,8 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
     async function loadFixedExpenses() {
       try {
         setLoading(true);
-        const res = await api.get<FixedExpense[]>(`/fixed`, {
-          params: {
-            year: currentMonth.getFullYear(),
-            month: currentMonth.getMonth() + 1,
-          },
-        });
+        const res = await api.get<FixedExpense[]>(`/variables`);
+        console.log(res.data);
         setExpenses(res.data);
       } catch (err) {
         console.error("[ExpenseCalendar] 고정 지출 조회 실패", err);
@@ -89,9 +86,7 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
   }, [currentMonth]);
 
   // 4. DERIVED VALUES FOR CURRENTLY SELECTED DATE
-  const selectedDateISO = `${year}-${String(month + 1).padStart(2, "0")}-${String(selectedDate).padStart(2, "0")}`;
-  const dailyExpenses = expenses.filter((e) => e.date === selectedDateISO);
-  const dailyTotal = dailyExpenses.reduce((sum, e) => sum + e.amount, 0);
+  // const selectedDateISO = `${year}-${String(month + 1).padStart(2, "0")}-${String(selectedDate).padStart(2, "0")}`;
 
   const prevMonth = () => setCurrentMonth(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentMonth(new Date(year, month + 1, 1));
@@ -109,76 +104,78 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <Container>
-      <Header>
-        <Title>오늘의 소비</Title>
-        <Subtitle>오늘의 소비를 등록/확인하세요.</Subtitle>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Header>
+          <Title>오늘의 소비</Title>
+          <Subtitle>오늘의 소비를 등록/확인하세요.</Subtitle>
 
-      </Header>
+        </Header>
 
-      <CalendarHeader>
-        <CalendarTitle>{`${year}년 ${month + 1}월`}</CalendarTitle>
-        <CalendarNavigation>
-          <TouchableOpacity onPress={prevMonth}>
-            <Ionicons name="chevron-back" size={20} color="#007BFF" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={nextMonth}>
-            <Ionicons name="chevron-forward" size={20} color="#007BFF" />
-          </TouchableOpacity>
-        </CalendarNavigation>
-      </CalendarHeader>
+        <CalendarHeader>
+          <CalendarTitle>{`${year}년 ${month + 1}월`}</CalendarTitle>
+          <CalendarNavigation>
+            <TouchableOpacity onPress={prevMonth}>
+              <Ionicons name="chevron-back" size={20} color="#007BFF" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={nextMonth}>
+              <Ionicons name="chevron-forward" size={20} color="#007BFF" />
+            </TouchableOpacity>
+          </CalendarNavigation>
+        </CalendarHeader>
 
-      <WeekdaysContainer>
-        {weekdays.map((day) => (
-          <Weekday key={day}>{day}</Weekday>
-        ))}
-      </WeekdaysContainer>
+        <WeekdaysContainer>
+          {weekdays.map((day) => (
+            <Weekday key={day}>{day}</Weekday>
+          ))}
+        </WeekdaysContainer>
 
-      <DaysContainer>
-        {dayCells.map((cell, idx) => {
-          const dayNumber = cell as number;
-          const isSelected = selectedDate === dayNumber;
-          if (cell === null) {
-            return <BlankDay key={`blank-${idx}`} />;
-          }
-          return isSelected ? (
-            <SelectedDay key={dayNumber} onPress={() => navigation.navigate('ExpenseRegistration')}>
-              <SelectedDayText>{dayNumber}</SelectedDayText>
-            </SelectedDay>
-          ) : (
-            <DayButton
-              key={dayNumber}
-              onPress={() => {
-                navigation.navigate('ExpenseRegistration');
-                setSelectedDate(dayNumber);
-              }}
-            >
-              <DayText>{dayNumber}</DayText>
-            </DayButton>
-          );
-        })}
-      </DaysContainer>
+        <DaysContainer>
+          {dayCells.map((cell, idx) => {
+            const dayNumber = cell as number;
+            const isSelected = selectedDate === dayNumber;
+            if (cell === null) {
+              return <BlankDay key={`blank-${idx}`} />;
+            }
+            return isSelected ? (
+              <SelectedDay key={dayNumber} onPress={() => navigation.navigate('TodayRegistration')}>
+                <SelectedDayText>{dayNumber}</SelectedDayText>
+              </SelectedDay>
+            ) : (
+              <DayButton
+                key={dayNumber}
+                onPress={() => {
+                  navigation.navigate('TodayRegistration');
+                  setSelectedDate(dayNumber);
+                }}
+              >
+                <DayText>{dayNumber}</DayText>
+              </DayButton>
+            );
+          })}
+        </DaysContainer>
 
-      <SummaryContainer>
-        <SummaryTitle>
-          {loading
-            ? "고정 지출 불러오는 중..."
-            : `오늘의 고정 지출 총 ${dailyTotal.toLocaleString()}원`}
-        </SummaryTitle>
-        {dailyExpenses.length === 0 && !loading && (
-          <TransactionAmount style={{ color: "#999" }}>내역이 없습니다.</TransactionAmount>
-        )}
-        {dailyExpenses.map((expense) => (
-          <TransactionContainer key={expense.id}>
-            <TransactionIconBlue>
-              <Ionicons name="save" size={20} color="#fff" />
-            </TransactionIconBlue>
-            <TransactionDetails>
-              <TransactionTitle>{expense.title}</TransactionTitle>
-              <TransactionAmount>{`${expense.amount.toLocaleString()}원`}</TransactionAmount>
-            </TransactionDetails>
-          </TransactionContainer>
-        ))}
-      </SummaryContainer>
+        <SummaryContainer>
+          <SummaryTitle>
+            {loading
+              ? "고정 지출 불러오는 중..."
+              : `오늘의 고정 지출 총 원`}
+          </SummaryTitle>
+          {expenses.length === 0 && !loading && (
+            <TransactionAmount style={{ color: "#999" }}>내역이 없습니다.</TransactionAmount>
+          )}
+          {expenses.map((expense) => (
+            <TransactionContainer key={expense.id}>
+              <TransactionIconBlue>
+                <Ionicons name="save" size={20} color="#fff" />
+              </TransactionIconBlue>
+              <TransactionDetails>
+                <TransactionTitle>{expense.content}</TransactionTitle>
+                <TransactionAmount>{`${expense.price}원`}</TransactionAmount>
+              </TransactionDetails>
+            </TransactionContainer>
+          ))}
+        </SummaryContainer>
+      </ScrollView>
     </Container>
   );
 };

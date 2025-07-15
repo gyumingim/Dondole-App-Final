@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { Ionicons } from "@expo/vector-icons"
 import { useNavigation } from "@react-navigation/native"
+import { Alert, ScrollView } from "react-native";
 import {
   Container,
   Header,
@@ -17,7 +18,6 @@ import {
   ButtonText
 } from "@/components/Styled"
 import { fetchQuizzes, submitQuizAnswer } from "../utils/api";
-import { Alert } from "react-native";
 
 export default function FinancialQuizScreen() {
   const navigation = useNavigation()
@@ -57,24 +57,25 @@ export default function FinancialQuizScreen() {
 
       {question && (
         <QuizContainer>
-          <QuestionContainer>
-            <QuestionNumber>Q.</QuestionNumber>
-            <QuestionText>{question.text}</QuestionText>
-          </QuestionContainer>
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
+            <QuestionContainer>
+              <QuestionNumber>Q.</QuestionNumber>
+              <QuestionText>{question.text}</QuestionText>
+            </QuestionContainer>
 
-          <AnswersContainer>
-            {question.options.map((option, idx) => (
-              <AnswerOption
-                key={idx}
-                selected={selectedAnswer === idx}
-                style={correctIndex === idx ? { borderColor: 'red', borderWidth: 2 } : undefined}
-                onPress={() => setSelectedAnswer(idx)}
-              >
-                <AnswerText>{option}</AnswerText>
-                {selectedAnswer === idx && <Ionicons name="checkmark" size={24} color="#007BFF" />}
-              </AnswerOption>
-            ))}
-          </AnswersContainer>
+            <AnswersContainer>
+              {question.options.map((option, idx) => (
+                <AnswerOption
+                  key={idx}
+                  selected={selectedAnswer === idx}
+                  style={correctIndex === idx ? { borderColor: 'red', borderWidth: 2 } : undefined}
+                  onPress={() => setSelectedAnswer(idx)}
+                >
+                  <AnswerText>{option}</AnswerText>
+                </AnswerOption>
+              ))}
+            </AnswersContainer>
+          </ScrollView>
         </QuizContainer>
       )}
 
@@ -104,7 +105,10 @@ export default function FinancialQuizScreen() {
       </Button>)}
 
         {feedback && (
-          <Button style={{ marginTop: 40 }} onPress={() => (navigation as any).navigate("QuizFeedback", { feedback })}>
+          <Button style={{ marginTop: 40 }} onPress={() => (navigation as any).navigate("QuizFeedback", { 
+            feedback,
+            correctAnswer: question?.options[correctIndex || 0] || ""
+          })}>
             <ButtonText>피드백 보기</ButtonText>
           </Button>
         )}

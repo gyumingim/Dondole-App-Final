@@ -47,7 +47,10 @@ export async function login({ username, password }: LoginParams) {
   const res = await api.post("/login", body);
   const token = res.data.accessToken;
   await setAuthToken(token);
-  return res;
+  return {
+    ...res,
+    userRole: res.data.role || (username.includes("parent") ? "PARENT" : "USER") // TODO: 실제 API에서 role 반환 시 수정
+  };
 }
 
 interface SignUpParams {

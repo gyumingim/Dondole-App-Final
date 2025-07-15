@@ -5,7 +5,6 @@ export const Container = styled.SafeAreaView`
   background-color: #f5f5f5;
   padding: 30px;
   padding-top: 80px;
-  justify-content: space-between;
 `;
 
 export const Header = styled.View`
@@ -295,7 +294,7 @@ export const AnswerOption = styled.TouchableOpacity<{selected?: boolean}>`
   justify-content: space-between;
   align-items: center;
   ${(props: {selected?: boolean}) =>
-    props.selected ? `border: 1px solid #007BFF;` : "border: 1px solid transparent;"};
+    props.selected ? `border: 2px solid #007BFF;` : "border: 2px solid transparent;"};
 `;
 
 export const AnswerText = styled.Text`

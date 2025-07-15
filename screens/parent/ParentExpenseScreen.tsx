@@ -28,28 +28,29 @@ import {
   TransactionAmount,
   DevelopedBy,
   BlankDay,
-} from "@/components/Styled";
-import { api } from "@/utils/api";
+} from "../../components/Styled";
+import { api } from "../../utils/api";
 
 interface Props {
   navigation: any;
 }
 
-interface FixedExpense {
-  id: number;
+interface VariableExpense {
   content: string;
-  price: number;
-  isSpent: string;
   date: string;
+  emotion: number;
+  id: number;
+  price: number;
+  thought: string;
 }
 
 const weekdays = ["월", "화", "수", "목", "금", "토", "일"];
 
-const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
+const ParentExpenseScreen: React.FC<Props> = ({ navigation }) => {
   const today = new Date();
   const [currentMonth, setCurrentMonth] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
   const [selectedDate, setSelectedDate] = useState(today.getDate());
-  const [expenses, setExpenses] = useState<FixedExpense[]>([]);
+  const [expenses, setExpenses] = useState<VariableExpense[]>([]);
   const [loading, setLoading] = useState(false);
 
   // ===== Calendar Utils =====
@@ -68,23 +69,26 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
   for (let i = 0; i < trailing; i++) dayCells.push(null);
 
   useEffect(() => {
-    async function loadFixedExpenses() {
+    async function loadVariableExpenses() {
       try {
         setLoading(true);
-        const res = await api.get<FixedExpense[]>(`/fixed`);
+        const res = await api.get<VariableExpense[]>(`/variables`);
         console.log(res.data);
         setExpenses(res.data);
       } catch (err) {
-        console.error("[DonationCalendar] 고정 지출 조회 실패", err);
+        console.error("[ParentExpense] 소비 지출 조회 실패", err);
       } finally {
         setLoading(false);
       }
     }
 
-    loadFixedExpenses();
+    loadVariableExpenses();
   }, [currentMonth]);
 
   // DERIVED VALUES FOR CURRENTLY SELECTED DATE
+  const selectedDateISO = `${year}-${String(month + 1).padStart(2, "0")}-${String(selectedDate).padStart(2, "0")}`;
+  const dailyExpenses = expenses.filter((e) => e.date.startsWith(selectedDateISO));
+  const dailyTotal = dailyExpenses.reduce((sum, e) => sum + e.price, 0);
 
   const prevMonth = () => setCurrentMonth(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentMonth(new Date(year, month + 1, 1));
@@ -103,9 +107,14 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <Container>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Header>
-          <Title>고정 지출</Title>
-          <Subtitle>고정 지출을 등록/확인하세요.</Subtitle>
+        <Header style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 16 }}>
+            <Ionicons name="chevron-back" size={24} color="#333" />
+          </TouchableOpacity>
+          <View style={{ flex: 1 }}>
+            <Title style={{ marginBottom: 4 }}>소비 내역 확인</Title>
+            <Subtitle>아이의 소비 내역을 확인하세요.</Subtitle>
+          </View>
         </Header>
 
         <CalendarHeader>
@@ -134,16 +143,13 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
             const dayNumber = cell;
             const isSelected = selectedDate === dayNumber;
             return isSelected ? (
-              <SelectedDay key={dayNumber} onPress={() => navigation.navigate('DonationRegistration')}>
+              <SelectedDay key={dayNumber} onPress={() => setSelectedDate(dayNumber)}>
                 <SelectedDayText>{dayNumber}</SelectedDayText>
               </SelectedDay>
             ) : (
               <DayButton
                 key={dayNumber}
-                onPress={() => {
-                  navigation.navigate('DonationRegistration');
-                  setSelectedDate(dayNumber);
-                }}
+                onPress={() => setSelectedDate(dayNumber)}
               >
                 <DayText>{dayNumber}</DayText>
               </DayButton>
@@ -154,13 +160,13 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
         <SummaryContainer>
           <SummaryTitle>
             {loading
-              ? "고정 지출 불러오는 중..."
-              : `오늘의 고정 지출 총 원`}
+              ? "소비 내역 불러오는 중..."
+              : `오늘의 소비 총 ${dailyTotal.toLocaleString()}원`}
           </SummaryTitle>
-          {expenses.length === 0 && !loading && (
+          {dailyExpenses.length === 0 && !loading && (
             <TransactionAmount style={{ color: "#999" }}>내역이 없습니다.</TransactionAmount>
           )}
-          {expenses.map((expense) => (
+          {dailyExpenses.map((expense) => (
             <TransactionContainer key={expense.id}>
               <TransactionIconBlue>
                 <Ionicons name="save" size={20} color="#fff" />
@@ -177,4 +183,4 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-export default ExpenseCalendarScreen;
+export default ParentExpenseScreen; 

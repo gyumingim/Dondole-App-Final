@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { View } from "react-native";
+import { View, ScrollView, Alert } from "react-native";
+import { api, getStoredToken } from "@/utils/api";
 import {
   Container,
   Header,
@@ -22,9 +23,31 @@ const DonationRegistrationScreen: React.FC<Props> = ({ navigation }) => {
   const [donationName, setDonationName] = useState("");
   const [donationAmount, setDonationAmount] = useState("");
 
+  async function handleRegister() {
+    if (!donationName || !donationAmount) {
+      Alert.alert("필수 입력", "지출 내용과 금액을 입력해주세요.");
+      return;
+    }
+    const payload = {
+      content: donationName,
+      price: Number(donationAmount) || 0,
+      date: new Date().toISOString(),
+    };
+    try {
+      const token = await getStoredToken();
+      await api.post("/fixed", payload, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
+      navigation.navigate("DonationCalendar");
+    } catch (err) {
+      console.error("[RegisterFixed] 실패", err);
+      Alert.alert("오류", "고정 지출 등록에 실패했습니다.");
+    }
+  }
+
   return (
     <Container>
-      <View>
+      <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingBottom: 20}}>
         <Header>
           <Title>고정 지출 등록</Title>
         </Header>
@@ -49,10 +72,9 @@ const DonationRegistrationScreen: React.FC<Props> = ({ navigation }) => {
             />
           </InputContainer>
         </Form>
-      </View>
-      
+      </ScrollView>
 
-      <Button onPress={() => navigation.navigate("DonationCalendar")}>
+      <Button onPress={handleRegister}>
         <ButtonText>지출 등록하기</ButtonText>
       </Button>
     </Container>

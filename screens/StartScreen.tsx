@@ -85,7 +85,11 @@ export default function StartScreen({ navigation }: { navigation: any }) {
 
       <Button
         onPress={() => {
-          if (selectedRole) navigation.navigate("Signup", { role: selectedRole });
+          if (selectedRole === "user") {
+            navigation.navigate("ChildSignup");
+          } else if (selectedRole === "parent") {
+            navigation.navigate("ParentSignup");
+          }
         }}
         disabled={!selectedRole}
         style={{ opacity: selectedRole ? 1 : 0.5 }}
