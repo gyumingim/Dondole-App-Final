@@ -224,22 +224,22 @@ export const MenuContainer = styled.View`
 export const MenuCard = styled.TouchableOpacity`
   background-color: #fff;
   border-radius: 16px;
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-top: 30px;
-  padding-bottom: 30px;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 24px;
+  padding-bottom: 24px;
   flex-direction: row;
   align-items: center;
 `;
 
 export const MenuIconContainer = styled.View`
-  width: 50px;
-  height: 50px;
+  width: 32px;
+  height: 32px;
   border-radius: 25px;
   background-color: #f5f5f5;
   justify-content: center;
   align-items: center;
-  margin-right: 16px;
+  margin-right: 4px;
 `;
 
 export const MenuTextContainer = styled.View`

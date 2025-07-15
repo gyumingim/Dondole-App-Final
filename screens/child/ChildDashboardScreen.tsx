@@ -78,7 +78,7 @@ export default function ChildDashboardScreen({ navigation }: { navigation: any }
             style={{ flex: 1, paddingVertical: 20 }}
           >
             <MenuIconContainer style={{ backgroundColor: '#FF9800', marginBottom: 8 }}>
-              <Ionicons name="calendar-outline" size={24} color="#fff" />
+              <Ionicons name="calendar-outline" size={16} color="#fff" />
             </MenuIconContainer>
             <MenuTextContainer style={{ alignItems: 'center' }}>
               <MenuTitle style={{ textAlign: 'center' }}>매일 피드백</MenuTitle>
@@ -90,7 +90,7 @@ export default function ChildDashboardScreen({ navigation }: { navigation: any }
             style={{ flex: 1, paddingVertical: 20 }}
           >
             <MenuIconContainer style={{ backgroundColor: '#9C27B0', marginBottom: 8 }}>
-              <Ionicons name="stats-chart-outline" size={24} color="#fff" />
+              <Ionicons name="stats-chart-outline" size={16} color="#fff" />
             </MenuIconContainer>
             <MenuTextContainer style={{ alignItems: 'center' }}>
               <MenuTitle style={{ textAlign: 'center' }}>주간 피드백</MenuTitle>

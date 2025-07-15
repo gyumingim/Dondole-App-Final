@@ -12,7 +12,7 @@ import {
 } from "../../components/Styled";
 
 export default function WeeklyFeedbackPage2({ navigation, route }: { navigation: any; route: any }) {
-  const { feedback } = route.params;
+  const { feedback } = route.params || {};
 
   const handleGoHome = () => {
     navigation.navigate('ChildDashboard');
@@ -80,15 +80,15 @@ export default function WeeklyFeedbackPage2({ navigation, route }: { navigation:
               조언
             </Text>
             
-            <Text style={{ 
-              fontSize: 16, 
-              textAlign: 'center',
-              color: '#666',
-              lineHeight: 24,
-              paddingHorizontal: 16
-            }}>
-              {feedback.recommendation}
-            </Text>
+                         <Text style={{ 
+               fontSize: 16, 
+               textAlign: 'center',
+               color: '#666',
+               lineHeight: 24,
+               paddingHorizontal: 16
+             }}>
+               {feedback?.advice || "조언을 불러올 수 없습니다."}
+             </Text>
           </QuizContainer>
         </MenuContainer>
 

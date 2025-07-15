@@ -86,7 +86,16 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
   }, [currentMonth]);
 
   // 4. DERIVED VALUES FOR CURRENTLY SELECTED DATE
-  // const selectedDateISO = `${year}-${String(month + 1).padStart(2, "0")}-${String(selectedDate).padStart(2, "0")}`;
+  const selectedDateISO = `${year}-${String(month + 1).padStart(2, "0")}-${String(selectedDate).padStart(2, "0")}`;
+  
+  // 선택된 날짜의 지출만 필터링
+  const selectedDateExpenses = expenses.filter(expense => {
+    const expenseDate = expense.date.split('T')[0]; // ISO 날짜에서 날짜 부분만 추출
+    return expenseDate === selectedDateISO;
+  });
+  
+  // 선택된 날짜의 총 소비 금액 계산
+  const totalDailyExpense = selectedDateExpenses.reduce((sum, expense) => sum + expense.price, 0);
 
   const prevMonth = () => setCurrentMonth(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentMonth(new Date(year, month + 1, 1));
@@ -157,20 +166,20 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
         <SummaryContainer>
           <SummaryTitle>
             {loading
-              ? "고정 지출 불러오는 중..."
-              : `오늘의 고정 지출 총 원`}
+              ? "오늘의 소비 불러오는 중..."
+              : `${year}년 ${month + 1}월 ${selectedDate}일 총 소비: ${totalDailyExpense.toLocaleString()}원`}
           </SummaryTitle>
-          {expenses.length === 0 && !loading && (
-            <TransactionAmount style={{ color: "#999" }}>내역이 없습니다.</TransactionAmount>
+          {selectedDateExpenses.length === 0 && !loading && (
+            <TransactionAmount style={{ color: "#999" }}>선택된 날짜에 소비 내역이 없습니다.</TransactionAmount>
           )}
-          {expenses.map((expense) => (
+          {selectedDateExpenses.map((expense) => (
             <TransactionContainer key={expense.id}>
               <TransactionIconBlue>
                 <Ionicons name="save" size={20} color="#fff" />
               </TransactionIconBlue>
               <TransactionDetails>
                 <TransactionTitle>{expense.content}</TransactionTitle>
-                <TransactionAmount>{`${expense.price}원`}</TransactionAmount>
+                <TransactionAmount>{`${expense.price.toLocaleString()}원`}</TransactionAmount>
               </TransactionDetails>
             </TransactionContainer>
           ))}

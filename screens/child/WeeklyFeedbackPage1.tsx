@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView, TouchableOpacity, View, Text } from "react-native";
+import { ScrollView, TouchableOpacity, View, Text, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
   Container,
@@ -13,51 +13,57 @@ import {
 import { api } from "../../utils/api";
 
 interface WeeklyFeedback {
-  weekPeriod: string;
-  totalSpent: number;
-  avgDailySpent: number;
-  topCategory: string;
-  feedbackMessage: string;
-  weeklyGoal: number;
-  achievement: number;
-  trend: "증가" | "감소" | "유지";
-  recommendation: string;
-  emotion: string;
+  feedback: string;
+  score: number;
+  averageEmotion: string;
+  advice: string;
 }
 
 export default function WeeklyFeedbackPage1({ navigation, route }: { navigation: any; route: any }) {
-  const [feedback, setFeedback] = useState<WeeklyFeedback>({
-    weekPeriod: "11월 4주차",
-    totalSpent: 45000,
-    avgDailySpent: 6400,
-    topCategory: "간식",
-    feedbackMessage: "오늘은 행복해요.",
-    weeklyGoal: 50000,
-    achievement: 90,
-    trend: "감소",
-    recommendation: "오늘은 시작 자금 10000원으로 주식에 모두 투자했지만, 다행히 운이 좋아서 반만큼인 5000원을 더 벌어 총 15000원이 되었습니다. 하지만 더욱 계획적인 투자와 리스크 관리를 위해 다음에는 목표량을 정해서 해보세요.",
-    emotion: "😊"
-  });
+  const [feedback, setFeedback] = useState<WeeklyFeedback | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // TODO: 실제 API로 주간 피드백 가져오기
-  // useEffect(() => {
-  //   const fetchWeeklyFeedback = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const response = await api.get("/child/weekly-feedback/current");
-  //       setFeedback(response.data);
-  //     } catch (error) {
-  //       console.error("주간 피드백 조회 실패", error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchWeeklyFeedback();
-  // }, []);
+  useEffect(() => {
+    const fetchWeeklyFeedback = async () => {
+      try {
+        setLoading(true);
+        const response = await api.post("/feedback/weekly", {});
+        setFeedback(response.data);
+      } catch (error) {
+        console.error("주간 피드백 조회 실패", error);
+        // 에러 시 기본값 설정
+        setFeedback({
+          feedback: "이번 주는 계획적으로 돈을 잘 사용했어! 앞으로도 이런 패턴을 유지해보자.",
+          score: 85,
+          averageEmotion: "매우 좋음",
+          advice: "앞으로도 계획적인 소비 습관을 유지하고, 목표를 세워서 저축도 해보자! 궁금한 점이 있으면 언제든지 물어봐."
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchWeeklyFeedback();
+  }, []);
+
+  const getEmotionImage = (emotion: string) => {
+    switch (emotion) {
+      case "좋음":
+      case "매우 좋음":
+        return require("../../assets/happy.png");
+      case "보통":
+        return require("../../assets/soso.png");
+      case "나쁨":
+      case "매우 나쁨":
+        return require("../../assets/sad.png");
+      default:
+        return require("../../assets/happy.png");
+    }
+  };
 
   const handleNext = () => {
-    navigation.navigate('WeeklyFeedbackPage2', { feedback });
+    if (feedback) {
+      navigation.navigate('WeeklyFeedbackPage2', { feedback });
+    }
   };
 
   return (
@@ -75,25 +81,49 @@ export default function WeeklyFeedbackPage1({ navigation, route }: { navigation:
 
         <MenuContainer>
           <QuizContainer style={{ padding: 40, alignItems: 'center', justifyContent: 'center', minHeight: 400 }}>
-            <Text style={{ fontSize: 120, marginBottom: 32 }}>{feedback.emotion}</Text>
-            
-            <Text style={{ 
-              fontSize: 24, 
-              fontWeight: '600', 
-              textAlign: 'center',
-              color: '#333',
-              lineHeight: 32
-            }}>
-              {feedback.feedbackMessage}
-            </Text>
+            {loading ? (
+              <Text style={{ fontSize: 18, color: '#666' }}>주간 피드백을 불러오는 중...</Text>
+            ) : feedback ? (
+              <>
+                <Image 
+                  source={getEmotionImage(feedback.averageEmotion)} 
+                  style={{ width: 120, height: 120, marginBottom: 32 }} 
+                  resizeMode="contain"
+                />
+                
+                <Text style={{ 
+                  fontSize: 20, 
+                  fontWeight: '600', 
+                  textAlign: 'center',
+                  color: '#007BFF',
+                  marginBottom: 16
+                }}>
+                  {feedback.averageEmotion} (점수: {feedback.score}점)
+                </Text>
+                
+                <Text style={{ 
+                  fontSize: 14, 
+                  fontWeight: '400', 
+                  textAlign: 'center',
+                  color: '#333',
+                  lineHeight: 28
+                }}>
+                  {feedback.feedback}
+                </Text>
+              </>
+            ) : (
+              <Text style={{ fontSize: 18, color: '#666' }}>주간 피드백을 불러올 수 없습니다.</Text>
+            )}
           </QuizContainer>
         </MenuContainer>
 
-        <View style={{ padding: 16, paddingBottom: 40 }}>
-          <Button onPress={handleNext}>
-            <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>다음으로</Text>
-          </Button>
-        </View>
+        {feedback && !loading && (
+          <View style={{ padding: 16, paddingBottom: 40 }}>
+            <Button onPress={handleNext}>
+              <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>다음으로</Text>
+            </Button>
+          </View>
+        )}
 
         <View style={{ alignItems: 'center', marginBottom: 20 }}>
           <Text style={{ color: '#999', fontSize: 12 }}>Developed by Oh yun chan</Text>
