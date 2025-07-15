@@ -23,7 +23,7 @@ import {
   FooterLink,
   Space
 } from "../components/Styled";
-import { login } from "../utils/api";
+import { login, api } from "../utils/api";
 
 export default function LoginScreen({ navigation }: any) {
   const [username, setUsername] = useState("");
@@ -41,11 +41,26 @@ export default function LoginScreen({ navigation }: any) {
       setLoading(true);
       const response = await login({ username, password });
       if (response.status === 200) {
-        // 역할에 따라 다른 화면으로 라우팅
-        if (response.userRole === "PARENT") {
-          navigation.navigate("ParentChildSelection");
-        } else {
-          navigation.navigate("Dashboard"); // 자녀는 바로 대시보드로
+        // 로그인 성공 후 사용자 정보 조회
+        try {
+          const userInfoResponse = await api.get("/users/mine");
+          const userRole = userInfoResponse.data.role;
+          
+          console.log("User role:", userRole);
+          
+          // 역할에 따라 다른 화면으로 라우팅
+          if (userRole === "GUARDIAN") {
+            navigation.navigate("ParentChildSelection");
+          } else if (userRole === "USER") { // USER는 자녀 역할
+            navigation.navigate("ChildDashboard");
+          }
+          else {
+            console.log("Unknown role");
+          }
+        } catch (userInfoError) {
+          console.error("사용자 정보 조회 실패:", userInfoError);
+          // 사용자 정보 조회 실패 시 기본값으로 자녀 대시보드
+          navigation.navigate("ChildDashboard");
         }
       } else {
         setError(true);

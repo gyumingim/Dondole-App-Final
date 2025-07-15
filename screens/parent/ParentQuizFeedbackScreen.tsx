@@ -66,7 +66,7 @@ export default function ParentQuizFeedbackScreen({ navigation, route }: { naviga
         </QuizContainer>
 
         <Button onPress={() => navigation.navigate("ParentQuizHistory")} style={{ marginTop: 20 }}>
-          <ButtonText>좋으요</ButtonText>
+          <ButtonText>홈으로</ButtonText>
         </Button>
       </ScrollView>
     </Container>

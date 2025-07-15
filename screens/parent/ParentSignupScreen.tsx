@@ -19,10 +19,10 @@ import {
   ButtonText,
   FooterLink,
 } from "../../components/Styled";
-import { signUp } from "../../utils/api";
+import { api } from "../../utils/api";
 
 export default function ParentSignupScreen({ navigation }: any) {
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -31,18 +31,16 @@ export default function ParentSignupScreen({ navigation }: any) {
   const [loading, setLoading] = useState(false);
 
   const handleSignup = async () => {
-    if (!username || !password || password !== confirmPassword) {
+    if (!name || !password || password !== confirmPassword) {
       setHasError(true);
       Alert.alert("입력 오류", "모든 필드를 올바르게 입력해주세요.");
       return;
     }
     try {
       setLoading(true);
-      const response = await signUp({
-        username,
-        password,
-        role: "PARENT",
-        level: "일반", // 보호자는 기본 레벨
+      const response = await api.post("/signup/guardian", {
+        name,
+        password
       });
       if (response.status === 200) {
         Alert.alert("가입 완료", "회원가입이 완료되었습니다.", [
@@ -70,13 +68,13 @@ export default function ParentSignupScreen({ navigation }: any) {
 
         <Form>
           <InputContainer>
-            <Label>사용 아이디</Label>
+            <Label>이름</Label>
             <Input
-              placeholder="사용할 아이디를 입력해주세요."
-              value={username}
-              onChangeText={setUsername}
+              placeholder="이름을 입력해주세요."
+              value={name}
+              onChangeText={setName}
             />
-            {hasError && <ErrorText>* 이미 사용중인 아이디 입니다.</ErrorText>}
+            {hasError && <ErrorText>* 이미 사용중인 이름입니다.</ErrorText>}
           </InputContainer>
 
           <InputContainer>

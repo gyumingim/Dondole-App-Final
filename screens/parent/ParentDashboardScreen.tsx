@@ -30,8 +30,8 @@ export default function ParentDashboardScreen({ navigation }: { navigation: any 
                 source={require("../../assets/piggy.png")}
               />
               <BalanceInfo>
-                <BalanceTitle>오윤한님의 잔여금액</BalanceTitle>
-                <BalanceAmount>50,423원 | 36,420원</BalanceAmount>
+                <BalanceTitle>오윤찬님의 잔여금액</BalanceTitle>
+                <BalanceAmount>0원 | 0원</BalanceAmount>
               </BalanceInfo>
             </BalanceHeader>
           </BalanceContainer>

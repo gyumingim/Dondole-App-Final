@@ -96,7 +96,7 @@ export default function ParentQuizDetailScreen({ navigation, route }: { navigati
         </QuizContainer>
 
         <Button onPress={handleNext} style={{ marginTop: 20 }}>
-          <ButtonText>{quiz?.isCorrect ? "좋으요" : "다음으로"}</ButtonText>
+          <ButtonText>{quiz?.isCorrect ? "홈으로" : "다음으로"}</ButtonText>
         </Button>
       </ScrollView>
     </Container>
