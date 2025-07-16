@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FlatList, TouchableOpacity, Text, View, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   Container,
   Header,
@@ -37,9 +38,9 @@ interface Props {
 
 interface FixedExpense {
   id: number;
-  title: string;
-  amount: number;
-  category: string;
+  content: string;
+  price: number;
+  isSpent: boolean;
   date: string;
 }
 
@@ -71,12 +72,13 @@ const ParentFixedExpenseScreen: React.FC<Props> = ({ navigation }) => {
     async function loadFixedExpenses() {
       try {
         setLoading(true);
-        const res = await api.get<FixedExpense[]>(`/fixed`, {
-          params: {
-            year: currentMonth.getFullYear(),
-            month: currentMonth.getMonth() + 1,
-          },
-        });
+        const userId = await AsyncStorage.getItem("selectedChildId");
+        if (!userId) {
+          console.error("[ParentFixedExpense] selectedChildId가 없습니다.");
+          return;
+        }
+        const res = await api.get<FixedExpense[]>(`/fixed/${userId}`);
+        console.log(res.data);
         setExpenses(res.data);
       } catch (err) {
         console.error("[ParentFixedExpense] 고정 지출 조회 실패", err);
@@ -90,8 +92,15 @@ const ParentFixedExpenseScreen: React.FC<Props> = ({ navigation }) => {
 
   // DERIVED VALUES FOR CURRENTLY SELECTED DATE
   const selectedDateISO = `${year}-${String(month + 1).padStart(2, "0")}-${String(selectedDate).padStart(2, "0")}`;
-  const dailyExpenses = expenses.filter((e) => e.date === selectedDateISO);
-  const dailyTotal = dailyExpenses.reduce((sum, e) => sum + e.amount, 0);
+  
+  // 선택된 날짜의 고정 지출만 필터링
+  const selectedDateExpenses = expenses.filter(expense => {
+    const expenseDate = expense.date.split('T')[0]; // ISO 날짜에서 날짜 부분만 추출
+    return expenseDate === selectedDateISO;
+  });
+  
+  // 선택된 날짜의 총 고정 지출 금액 계산
+  const totalDailyExpense = selectedDateExpenses.reduce((sum, expense) => sum + expense.price, 0);
 
   const prevMonth = () => setCurrentMonth(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentMonth(new Date(year, month + 1, 1));
@@ -164,19 +173,19 @@ const ParentFixedExpenseScreen: React.FC<Props> = ({ navigation }) => {
           <SummaryTitle>
             {loading
               ? "고정 지출 불러오는 중..."
-              : `오늘의 고정 지출 총 ${dailyTotal.toLocaleString()}원`}
+              : `${year}년 ${month + 1}월 ${selectedDate}일 총 고정 지출: ${totalDailyExpense.toLocaleString()}원`}
           </SummaryTitle>
-          {dailyExpenses.length === 0 && !loading && (
-            <TransactionAmount style={{ color: "#999" }}>내역이 없습니다.</TransactionAmount>
+          {selectedDateExpenses.length === 0 && !loading && (
+            <TransactionAmount style={{ color: "#999" }}>선택된 날짜에 고정 지출 내역이 없습니다.</TransactionAmount>
           )}
-          {dailyExpenses.map((expense) => (
+          {expenses.map((expense) => (
             <TransactionContainer key={expense.id}>
               <TransactionIconBlue>
                 <Ionicons name="save" size={20} color="#fff" />
               </TransactionIconBlue>
               <TransactionDetails>
-                <TransactionTitle>{expense.title}</TransactionTitle>
-                <TransactionAmount>{`${expense.amount.toLocaleString()}원`}</TransactionAmount>
+                <TransactionTitle>{expense.content}</TransactionTitle>
+                <TransactionAmount>{`${expense.price.toLocaleString()}원`}</TransactionAmount>
               </TransactionDetails>
             </TransactionContainer>
           ))}

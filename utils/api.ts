@@ -16,7 +16,6 @@ const api = axios.create({
 api.interceptors.request.use(async (config) => {
   const token = await AsyncStorage.getItem(TOKEN_KEY);
   if (token) {
-    console.log(`[API] ${config.method?.toUpperCase()} ${config.url} \nBearer ${token}`);
     config.headers = config.headers || {};
     config.headers["Authorization"] = `Bearer ${token}`;
   }

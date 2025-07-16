@@ -46,8 +46,6 @@ export default function LoginScreen({ navigation }: any) {
           const userInfoResponse = await api.get("/users/mine");
           const userRole = userInfoResponse.data.role;
           
-          console.log("User role:", userRole);
-          
           // 역할에 따라 다른 화면으로 라우팅
           if (userRole === "GUARDIAN") {
             navigation.navigate("ParentChildSelection");

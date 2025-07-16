@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ScrollView, TouchableOpacity, View, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   Container,
   Header,
@@ -17,51 +18,41 @@ import { api } from "../../utils/api";
 interface QuizResult {
   id: number;
   question: string;
-  date: string;
-  isCorrect: boolean;
-  userAnswer: string;
-  correctAnswer: string;
+  choice1: string;
+  choice2: string;
+  choice3: string;
+  choice4: string;
+  answer: number;
+  userAnswer: number;
+  isCorrected: boolean;
+  feedback: string;
+  createdAt: string;
 }
 
 export default function ParentQuizHistoryScreen({ navigation, route }: { navigation: any; route: any }) {
-  const [quizHistory, setQuizHistory] = useState<QuizResult[]>([
-    {
-      id: 1,
-      question: "3000원인 남은돈에...",
-      date: "4월 29일 화요일",
-      isCorrect: true,
-      userAnswer: "내일 다시 생각해본다",
-      correctAnswer: "내일 다시 생각해본다"
-    },
-    {
-      id: 2,
-      question: "3000원인 남은돈에...",
-      date: "4월 28일 월요일",
-      isCorrect: false,
-      userAnswer: "그냥 구매한다",
-      correctAnswer: "내일 다시 생각해본다"
-    }
-  ]);
+  const [quizHistory, setQuizHistory] = useState<QuizResult[]>([]);
   const [loading, setLoading] = useState(false);
-  const selectedChild = route?.params?.selectedChild;
 
-  // TODO: 실제 API로 퀴즈 내역 가져오기
-  // useEffect(() => {
-  //   const fetchQuizHistory = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const response = await api.get(`/parent/children/${selectedChild?.id}/quiz-history`);
-  //       setQuizHistory(response.data);
-  //     } catch (error) {
-  //       console.error("퀴즈 내역 조회 실패", error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   if (selectedChild) {
-  //     fetchQuizHistory();
-  //   }
-  // }, [selectedChild]);
+  useEffect(() => {
+    const fetchQuizHistory = async () => {
+      try {
+        setLoading(true);
+        const userId = await AsyncStorage.getItem("selectedChildId");
+        if (!userId) {
+          console.error("[ParentQuizHistory] selectedChildId가 없습니다.");
+          return;
+        }
+        const response = await api.get<QuizResult[]>(`/quizs/${userId}`);
+        setQuizHistory(response.data);
+      } catch (error) {
+        console.error("[ParentQuizHistory] 퀴즈 내역 조회 실패", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchQuizHistory();
+  }, []);
 
   const handleQuizDetail = (quiz: QuizResult) => {
     navigation.navigate("ParentQuizDetail", { quiz });
@@ -81,30 +72,35 @@ export default function ParentQuizHistoryScreen({ navigation, route }: { navigat
         </Header>
 
         <MenuContainer>
-          {quizHistory.map((quiz) => (
-            <MenuCard key={quiz.id} onPress={() => handleQuizDetail(quiz)}>
-              <MenuTextContainer style={{ flex: 1 }}>
-                <MenuTitle style={{ marginBottom: 8 }}>{quiz.question}</MenuTitle>
-                <MenuDescription>{quiz.date}</MenuDescription>
-              </MenuTextContainer>
-              <View style={{ 
-                backgroundColor: quiz.isCorrect ? '#007BFF' : '#FF3B30',
-                paddingHorizontal: 12,
-                paddingVertical: 6,
-                borderRadius: 12,
-                minWidth: 50,
-                alignItems: 'center'
-              }}>
-                <Text style={{ 
-                  color: '#fff', 
-                  fontSize: 12, 
-                  fontWeight: '600' 
+          {quizHistory.map((quiz) => {
+            const date = new Date(quiz.createdAt);
+            const formattedDate = `${date.getMonth() + 1}월 ${date.getDate()}일`;
+            
+            return (
+              <MenuCard key={quiz.id} onPress={() => handleQuizDetail(quiz)}>
+                <MenuTextContainer style={{ flex: 1 }}>
+                  <MenuTitle style={{ marginBottom: 8 }}>{quiz.question}</MenuTitle>
+                  <MenuDescription>{formattedDate}</MenuDescription>
+                </MenuTextContainer>
+                <View style={{ 
+                  backgroundColor: quiz.isCorrected ? '#007BFF' : '#FF3B30',
+                  paddingHorizontal: 12,
+                  paddingVertical: 6,
+                  borderRadius: 12,
+                  minWidth: 50,
+                  alignItems: 'center'
                 }}>
-                  {quiz.isCorrect ? '정답' : '오답'}
-                </Text>
-              </View>
-            </MenuCard>
-          ))}
+                  <Text style={{ 
+                    color: '#fff', 
+                    fontSize: 12, 
+                    fontWeight: '600' 
+                  }}>
+                    {quiz.isCorrected ? '정답' : '오답'}
+                  </Text>
+                </View>
+              </MenuCard>
+            );
+          })}
 
           {quizHistory.length === 0 && !loading && (
             <View style={{ 

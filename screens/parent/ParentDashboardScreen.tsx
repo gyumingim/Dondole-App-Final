@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Container,
   Header,
@@ -18,8 +19,41 @@ import {
   MenuTitle,
   MenuDescription,
 } from "../../components/Styled";
+import { api } from "../../utils/api";
+
+interface ChildInfo {
+  id: number;
+  name: string;
+  level: string;
+  age: number;
+  role: string;
+  assets: number;
+  expectedAssets: number;
+}
 
 export default function ParentDashboardScreen({ navigation }: { navigation: any }) {
+  const [childInfo, setChildInfo] = useState<ChildInfo | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchChildInfo = async () => {
+      try {
+        const selectedChildId = await AsyncStorage.getItem("selectedChildId");
+        
+        if (selectedChildId) {
+          const response = await api.get(`/users/${selectedChildId}`);
+          setChildInfo(response.data);
+        }
+      } catch (error) {
+        console.error("자녀 정보 조회 실패", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchChildInfo();
+  }, []);
+
   return (
     <Container>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -30,8 +64,12 @@ export default function ParentDashboardScreen({ navigation }: { navigation: any 
                 source={require("../../assets/piggy.png")}
               />
               <BalanceInfo>
-                <BalanceTitle>오윤찬님의 잔여금액</BalanceTitle>
-                <BalanceAmount>0원 | 0원</BalanceAmount>
+                <BalanceTitle>
+                  {loading ? "로딩 중..." : childInfo ? `${childInfo.name}님의 잔여금액` : "자녀 정보 없음"}
+                </BalanceTitle>
+                <BalanceAmount>
+                  {loading ? "..." : childInfo ? `${childInfo.assets.toLocaleString()}원 | ${childInfo.expectedAssets.toLocaleString()}원` : "0원 | 0원"}
+                </BalanceAmount>
               </BalanceInfo>
             </BalanceHeader>
           </BalanceContainer>

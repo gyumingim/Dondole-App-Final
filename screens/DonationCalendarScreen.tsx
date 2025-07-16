@@ -72,7 +72,6 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
       try {
         setLoading(true);
         const res = await api.get<FixedExpense[]>(`/fixed`);
-        console.log(res.data);
         setExpenses(res.data);
       } catch (err) {
         console.error("[DonationCalendar] 고정 지출 조회 실패", err);

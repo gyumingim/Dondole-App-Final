@@ -30,7 +30,6 @@ const ExpenseRegistrationScreen: React.FC<Props> = ({ navigation }) => {
       Alert.alert("필수 입력", "지출 내용과 금액을 입력해주세요.");
       return;
     }
-    console.log(new Date().toISOString().slice(0,10));
     const payload = {
       content: expenseName,
       price: Number(expenseAmount) || 0,

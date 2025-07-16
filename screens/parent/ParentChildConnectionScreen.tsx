@@ -33,23 +33,25 @@ export default function ParentChildConnectionScreen({ navigation }: { navigation
     try {
       setLoading(true);
       
-      // TODO: 실제 자녀 연동 API 호출
-      // const response = await api.post("/parent/connect-child", {
-      //   childUsername: childId,
-      //   childPassword: childPassword
-      // });
+      const response = await api.post("/peristalsis", {
+        name: childId,
+        password: childPassword
+      });
 
-      // 임시로 성공 처리
-      Alert.alert(
-        "연동 완료", 
-        `${childId} 사용자와 연동이 완료되었습니다.`,
-        [
-          { 
-            text: "확인", 
-            onPress: () => navigation.navigate("ParentChildSelection")
-          }
-        ]
-      );
+      if (response.status === 200) {
+        Alert.alert(
+          "연동 완료", 
+          `${childId} 사용자와 연동이 완료되었습니다.`,
+          [
+            { 
+              text: "확인", 
+              onPress: () => navigation.goBack() // 이전 페이지(ParentChildSelection)로 돌아가기
+            }
+          ]
+        );
+      } else {
+        Alert.alert("연동 실패", "사용자 정보를 확인해주세요.");
+      }
 
     } catch (error) {
       console.error("자녀 연동 실패", error);
@@ -98,7 +100,7 @@ export default function ParentChildConnectionScreen({ navigation }: { navigation
         </Form>
 
         <Button onPress={handleConnection} disabled={loading}>
-          <ButtonText>가입하기</ButtonText>
+          <ButtonText>{loading ? "연동 중..." : "연동하기"}</ButtonText>
         </Button>
       </ScrollView>
     </Container>

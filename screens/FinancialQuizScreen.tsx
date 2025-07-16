@@ -85,15 +85,9 @@ export default function FinancialQuizScreen() {
         onPress={async () => {
           if (!question || selectedAnswer === null) return;
           try {
+            await api.post("/ai/quiz", {});
+            console.log("새로운 퀴즈 생성 요청 완료");
             const result = await submitQuizAnswer({ id: question.id, userAnswer: selectedAnswer + 1 });
-            
-            // 퀴즈 제출 후 새로운 퀴즈 생성 API 호출
-            try {
-              await api.post("/ai/quiz", {});
-              console.log("새로운 퀴즈 생성 요청 완료");
-            } catch (quizGenError) {
-              console.error("퀴즈 생성 API 호출 실패:", quizGenError);
-            }
             
             if (result.isCorrected) {
               Alert.alert("정답입니다!", "잘했어요!", [

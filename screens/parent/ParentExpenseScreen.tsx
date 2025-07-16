@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { FlatList, TouchableOpacity, Text, View, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Alert } from "react-native";
 import {
   Container,
   Header,
@@ -38,7 +40,7 @@ interface Props {
 interface VariableExpense {
   content: string;
   date: string;
-  emotion: number;
+  emotion: string;
   id: number;
   price: number;
   thought: string;
@@ -72,8 +74,12 @@ const ParentExpenseScreen: React.FC<Props> = ({ navigation }) => {
     async function loadVariableExpenses() {
       try {
         setLoading(true);
-        const res = await api.get<VariableExpense[]>(`/variables`);
-        console.log(res.data);
+        const userId = await AsyncStorage.getItem("selectedChildId");
+        if (!userId) {
+          console.error("[ParentExpense] userId가 없습니다.");
+          return;
+        }
+        const res = await api.get<VariableExpense[]>(`/variables/${userId}`);
         setExpenses(res.data);
       } catch (err) {
         console.error("[ParentExpense] 소비 지출 조회 실패", err);
@@ -87,8 +93,15 @@ const ParentExpenseScreen: React.FC<Props> = ({ navigation }) => {
 
   // DERIVED VALUES FOR CURRENTLY SELECTED DATE
   const selectedDateISO = `${year}-${String(month + 1).padStart(2, "0")}-${String(selectedDate).padStart(2, "0")}`;
-  const dailyExpenses = expenses.filter((e) => e.date.startsWith(selectedDateISO));
-  const dailyTotal = dailyExpenses.reduce((sum, e) => sum + e.price, 0);
+  
+  // 선택된 날짜의 변동 지출만 필터링
+  const selectedDateExpenses = expenses.filter(expense => {
+    const expenseDate = expense.date.split('T')[0]; // ISO 날짜에서 날짜 부분만 추출
+    return expenseDate === selectedDateISO;
+  });
+  
+  // 선택된 날짜의 총 변동 지출 금액 계산
+  const totalDailyExpense = selectedDateExpenses.reduce((sum, expense) => sum + expense.price, 0);
 
   const prevMonth = () => setCurrentMonth(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentMonth(new Date(year, month + 1, 1));
@@ -161,12 +174,12 @@ const ParentExpenseScreen: React.FC<Props> = ({ navigation }) => {
           <SummaryTitle>
             {loading
               ? "소비 내역 불러오는 중..."
-              : `오늘의 소비 총 ${dailyTotal.toLocaleString()}원`}
+              : `${year}년 ${month + 1}월 ${selectedDate}일 총 소비: ${totalDailyExpense.toLocaleString()}원`}
           </SummaryTitle>
-          {dailyExpenses.length === 0 && !loading && (
-            <TransactionAmount style={{ color: "#999" }}>내역이 없습니다.</TransactionAmount>
+          {selectedDateExpenses.length === 0 && !loading && (
+            <TransactionAmount style={{ color: "#999" }}>선택된 날짜에 소비 내역이 없습니다.</TransactionAmount>
           )}
-          {dailyExpenses.map((expense) => (
+          {expenses.map((expense) => (
             <TransactionContainer key={expense.id}>
               <TransactionIconBlue>
                 <Ionicons name="save" size={20} color="#fff" />
