@@ -14,7 +14,11 @@ import {
 export default function ParentQuizFeedbackScreen({ navigation, route }: { navigation: any; route: any }) {
   const { quiz, correctAnswer } = route.params || {};
 
-  const feedbackText = "돈을내리고이제쇼핑한것처럼 감정이 나온대체거기서 가명으로 나는 해시영 돈 좋아하는 않은감정인지 고치";
+  // 피드백 텍스트를 quiz 객체에서 가져오기
+  const feedbackText = quiz?.feedback || "피드백이 없습니다.";
+  
+  // 정답 텍스트도 동적으로 처리
+  const correctAnswerText = correctAnswer || (quiz ? [quiz.choice1, quiz.choice2, quiz.choice3, quiz.choice4][quiz.answer] : "정답 정보가 없습니다.");
 
   return (
     <Container>
@@ -51,7 +55,7 @@ export default function ParentQuizFeedbackScreen({ navigation, route }: { naviga
               fontSize: 18,
               fontWeight: 'bold'
             }}>
-              {correctAnswer}
+              {correctAnswerText}
             </Title>
             
             <Subtitle style={{ 

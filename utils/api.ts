@@ -62,7 +62,7 @@ interface SignUpParams {
   expectedAssets?: number;
 }
 
-export async function signUp({ username, password, role, level, age = 0, assets = 0, expectedAssets = 0 }: SignUpParams) {
+export async function signUp({ username, password, role, level, age = 0, assets = 50000, expectedAssets = 50000 }: SignUpParams) {
   const body = {
     name: username,
     password,

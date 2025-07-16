@@ -75,7 +75,7 @@ export default function ChildDashboardScreen({ navigation }: { navigation: any }
                   {loading ? "불러오는 중..." : `${userInfo?.name || "사용자"}님의 잔여금액`}
                 </BalanceTitle>
                 <BalanceAmount>
-                  {loading ? "..." : `${(userInfo?.expectedAssets || 0).toLocaleString()}원`}
+                  {loading ? "..." : `${(userInfo?.expectedAssets || 0).toLocaleString()}원 | ${(userInfo?.assets || 0).toLocaleString()}원`}
                 </BalanceAmount>
               </BalanceInfo>
             </BalanceHeader>
