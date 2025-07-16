@@ -112,7 +112,10 @@ export default function ParentWeeklyFeedbackScreen({ navigation }: { navigation:
             </View>
           ) : (
             feedbacks.map((feedback) => (
-              <MenuCard key={feedback.id}>
+              <MenuCard 
+                key={feedback.id}
+                onPress={() => navigation.navigate("ParentFeedbackDetail", { feedback })}
+              >
                 <MenuTextContainer style={{ flex: 1 }}>
                   <MenuTitle style={{ marginBottom: 8 }}>{feedback.content}</MenuTitle>
                   <MenuDescription style={{ marginBottom: 8 }}>
