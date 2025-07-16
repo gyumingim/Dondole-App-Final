@@ -21,6 +21,8 @@ import ParentQuizDetailScreen from "./screens/parent/ParentQuizDetailScreen"
 import ParentQuizFeedbackScreen from "./screens/parent/ParentQuizFeedbackScreen"
 import ParentFixedExpenseScreen from "./screens/parent/ParentFixedExpenseScreen"
 import ParentExpenseScreen from "./screens/parent/ParentExpenseScreen"
+import ParentDailyFeedbackScreen from "./screens/parent/ParentDailyFeedbackScreen"
+import ParentWeeklyFeedbackScreen from "./screens/parent/ParentWeeklyFeedbackScreen"
 import ChildDashboardScreen from "./screens/child/ChildDashboardScreen"
 
 import TodayRegistrationScreen from "./screens/TodayRegistrationScreen"
@@ -82,6 +84,8 @@ export default function App() {
             <Stack.Screen name="ParentQuizFeedback" component={ParentQuizFeedbackScreen} />
             <Stack.Screen name="ParentFixedExpense" component={ParentFixedExpenseScreen} />
             <Stack.Screen name="ParentExpense" component={ParentExpenseScreen} />
+            <Stack.Screen name="ParentDailyFeedback" component={ParentDailyFeedbackScreen} />
+            <Stack.Screen name="ParentWeeklyFeedback" component={ParentWeeklyFeedbackScreen} />
             <Stack.Screen name="ParentDashboard" component={ParentDashboardScreen} />
             <Stack.Screen name="ChildDashboard" component={ChildDashboardScreen} />
 

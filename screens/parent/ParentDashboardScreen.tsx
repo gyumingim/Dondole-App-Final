@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
+import { FontAwesome5, MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Container,
@@ -103,6 +103,33 @@ export default function ParentDashboardScreen({ navigation }: { navigation: any 
             <MenuTextContainer>
               <MenuTitle>금융 퀴즈 내역</MenuTitle>
               <MenuDescription>아이들의 퀴즈 내역을 확인하세요.</MenuDescription>
+            </MenuTextContainer>
+          </MenuCard>
+        </MenuContainer>
+
+        {/* 피드백 보기 버튼들 */}
+        <MenuContainer style={{ flexDirection: 'row', gap: 12, marginTop: 20 }}>
+          <MenuCard 
+            onPress={() => navigation.navigate("ParentDailyFeedback")}
+            style={{ flex: 1, paddingVertical: 20 }}
+          >
+            <MenuIconContainer style={{ backgroundColor: '#FF9800', marginBottom: 8 }}>
+              <Ionicons name="calendar-outline" size={16} color="#fff" />
+            </MenuIconContainer>
+            <MenuTextContainer style={{ alignItems: 'center' }}>
+              <MenuTitle style={{ textAlign: 'center' }}>매일 피드백 내역</MenuTitle>
+            </MenuTextContainer>
+          </MenuCard>
+
+          <MenuCard 
+            onPress={() => navigation.navigate("ParentWeeklyFeedback")}
+            style={{ flex: 1, paddingVertical: 20 }}
+          >
+            <MenuIconContainer style={{ backgroundColor: '#9C27B0', marginBottom: 8 }}>
+              <Ionicons name="stats-chart-outline" size={16} color="#fff" />
+            </MenuIconContainer>
+            <MenuTextContainer style={{ alignItems: 'center' }}>
+              <MenuTitle style={{ textAlign: 'center' }}>주간 피드백 내역</MenuTitle>
             </MenuTextContainer>
           </MenuCard>
         </MenuContainer>
