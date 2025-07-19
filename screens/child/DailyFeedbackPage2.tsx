@@ -1,75 +1,97 @@
 import React from "react";
-import { ScrollView, TouchableOpacity, View, Text, Image } from "react-native";
+import { ScrollView, View, Text, Image, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
   Container,
+  Button,
+  ButtonText,
   Header,
   Title,
   Subtitle,
-  MenuContainer,
-  QuizContainer,
-  Button,
 } from "../../components/Styled";
 
 export default function DailyFeedbackPage2({ navigation, route }: { navigation: any; route: any }) {
-  const { feedback } = route.params || {};
+  const { feedbackData } = route.params || {};
 
   const handleGoHome = () => {
     navigation.navigate('ChildDashboard');
   };
 
   return (
-    <Container>
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <Container style={{ backgroundColor: '#FFFFFF' }}>
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ 
+          paddingBottom: 40
+        }}
+      >
+        {/* 헤더 */}
         <Header style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 16 }}>
             <Ionicons name="chevron-back" size={24} color="#333" />
           </TouchableOpacity>
-          <View style={{ flex: 1 }}>
-            <Title style={{ marginBottom: 4 }}>매일 피드백</Title>
-            <Subtitle>나의 피드백을 확인해보세요.</Subtitle>
+          <View>
+            <Title>매일 피드백</Title>
+            <Subtitle>조언을 확인해 보세요.</Subtitle>
           </View>
         </Header>
-
-        <MenuContainer>
-          <QuizContainer style={{ padding: 40, alignItems: 'center', justifyContent: 'center', minHeight: 400 }}>
+        <View style={{
+          backgroundColor: '#FFFFFF',
+          borderRadius: 24,
+          padding: 40,
+          margin: 20,
+          alignItems: 'center',
+          shadowColor: '#000',
+          shadowOpacity: 0.1,
+          shadowRadius: 8,
+          elevation: 2,
+        }}>
+          {/* 조언 아이콘 */}
+          <View style={{
+            marginBottom: 24,
+            alignItems: 'center'
+          }}>
             <Image 
               source={require("../../assets/advice.png")} 
-              style={{ width: 80, height: 80, marginBottom: 32 }} 
+              style={{ width: 80, height: 80, marginBottom: 16 }} 
               resizeMode="contain"
             />
-            
-            <Text style={{ 
-              fontSize: 24, 
-              fontWeight: '600', 
+          </View>
+
+          <Text style={{
+            fontSize: 20,
+            fontFamily: 'Pretendard-Bold',
+            color: '#191F28',
+            marginBottom: 20,
+            textAlign: 'center'
+          }}>
+            조언
+          </Text>
+
+          {(feedbackData?.advice || '오늘 사용 가능했던 돈을 더 잘 관리해보자!').split('\n').map((line: string, idx: number) => (
+            <Text key={idx} style={{
+              fontSize: 14,
+              fontFamily: 'Pretendard-Regular',
+              color: '#6B7684',
               textAlign: 'center',
-              color: '#333',
-              marginBottom: 24
+              lineHeight: 20,
+              marginBottom: 8
             }}>
-              조언
+              {line.trim()}
             </Text>
-            
-                         <Text style={{ 
-               fontSize: 16, 
-               textAlign: 'center',
-               color: '#666',
-               lineHeight: 24,
-               paddingHorizontal: 16
-             }}>
-               {feedback?.advice || "조언을 불러올 수 없습니다."}
-             </Text>
-          </QuizContainer>
-        </MenuContainer>
-
-        <View style={{ padding: 16, paddingBottom: 40 }}>
-          <Button onPress={handleGoHome}>
-            <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>홈으로</Text>
-          </Button>
+          ))}
         </View>
 
-        <View style={{ alignItems: 'center', marginBottom: 20 }}>
-          <Text style={{ color: '#999', fontSize: 12 }}>Developed by Oh yun chan</Text>
-        </View>
+        <Button 
+          onPress={handleGoHome}
+          style={{ 
+            margin: 20,
+            marginTop: 0
+          }}
+        >
+          <ButtonText>홈으로</ButtonText>
+        </Button>
+
       </ScrollView>
     </Container>
   );

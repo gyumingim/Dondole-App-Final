@@ -1,174 +1,159 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView, TouchableOpacity, View, Text, Image, Alert } from "react-native";
+import { ScrollView, View, Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
   Container,
   Header,
   Title,
   Subtitle,
-  MenuContainer,
-  QuizContainer,
   Button,
+  ButtonText,
 } from "../../components/Styled";
 import { api } from "../../utils/api";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
-interface WeeklyFeedback {
-  feedback: string;
-  score: number;
-  averageEmotion: string;
-  advice: string;
-}
-
-export default function WeeklyFeedbackPage1({ navigation, route }: { navigation: any; route: any }) {
-  const [feedback, setFeedback] = useState<WeeklyFeedback | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null);
+export default function WeeklyFeedbackPage1({ navigation }: { navigation: any }) {
+  const [feedbackData, setFeedbackData] = useState<any | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const fetchWeeklyFeedback = async () => {
-      try {
-        setLoading(true);
-        const userId = await AsyncStorage.getItem("userId");
-        if (!userId) {
-          Alert.alert("오류", "사용자 정보를 찾을 수 없습니다.");
-          return;
-        }
-        const response = await api.post(`/feedback/weekly/${userId}`, {});
-        setFeedback(response.data);
-      } catch (error) {
-        console.error("주간 피드백 조회 실패", error);
-        // 에러 시 기본값 설정
-        setFeedback({
-          feedback: "이번 주는 계획적으로 돈을 잘 사용했어! 앞으로도 이런 패턴을 유지해보자.",
-          score: 85,
-          averageEmotion: "매우 좋음",
-          advice: "앞으로도 계획적인 소비 습관을 유지하고, 목표를 세워서 저축도 해보자! 궁금한 점이 있으면 언제든지 물어봐."
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchWeeklyFeedback();
   }, []);
 
-  const getEmotionImage = (emotion: string) => {
-    switch (emotion) {
-      case "좋음":
-      case "매우 좋음":
-        return require("../../assets/happy.png");
-      case "보통":
-        return require("../../assets/soso.png");
-      case "나쁨":
-      case "매우 나쁨":
-        return require("../../assets/sad.png");
-      default:
-        return require("../../assets/happy.png");
-    }
-  };
-
-  const handleNext = () => {
-    if (feedback) {
-      navigation.navigate('WeeklyFeedbackPage2', { feedback });
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!selectedEmotion) {
-      Alert.alert("감정을 선택해주세요", "이번 주 기분을 먼저 선택해주세요.");
-      return;
-    }
-
+  const fetchWeeklyFeedback = async () => {
     try {
-      setLoading(true);
-      
-      // AsyncStorage에서 userId 가져오기
-      const userId = await AsyncStorage.getItem("userId");
-      if (!userId) {
-        Alert.alert("오류", "사용자 정보를 찾을 수 없습니다.");
-        return;
+      const url = "http://15.164.98.121:8080/feedback/weekly";
+      const res = await api.get(url);
+      console.log("weekly feedback", res.data);
+      let data = res.data;
+      if (Array.isArray(data) && data.length > 0) {
+        // createdAt 기준 내림차순 정렬 후 가장 최근 항목 선택
+        data = data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
       }
-      
-      const response = await api.post(`/feedback/weekly/${userId}`, {
-        emotion: selectedEmotion
-      });
-      
-      if (response.status === 200) {
-        (navigation as any).navigate("WeeklyFeedbackPage2", { 
-          emotion: selectedEmotion,
-          feedbackData: response.data 
+      console.log("weekly feedback", data);
+      if (data) {
+        const emotionMap: Record<string, string> = {
+          "매우 좋음": "이번 주는 기분이 아주 좋았어요!",
+          "좋음": "이번 주는 기분이 좋았어요!",
+          "보통": "이번 주는 평범했어요.",
+          "나쁨": "이번 주는 아쉬웠어요.",
+          "매우 나쁨": "이번 주는 아쉬웠어요.",
+        };
+
+        const summary = emotionMap[data.emotion?.trim()] || "이번 주는 평범했어요.";
+
+        const details = (data.content || "").split(/\n|\.|,/).map((s: string) => s.trim()).filter((s: string) => s.length > 0);
+
+        setFeedbackData({
+          summary,
+          details,
+          advice: data.advice || undefined,
+          emotion: data.emotion?.trim() || "보통",
         });
       }
     } catch (error) {
-      console.error("주간 피드백 제출 실패:", error);
-      Alert.alert("오류", "피드백 제출에 실패했습니다. 다시 시도해주세요.");
+      console.warn("/feedback/weekly API 실패, 더미 데이터 사용", error);
+      setFeedbackData({
+        summary: "이번 주는 평범했어요.",
+        details: [
+          "이번 주에 30000원을 썼네요.",
+          "예산을 잘 지켰어요!",
+          "다음 주에도 잘해보자고요!"
+        ],
+        advice: "계획적인 소비를 유지하고, 저축 목표를 세워보세요!",
+        emotion: "보통",
+      });
     } finally {
       setLoading(false);
     }
   };
 
+  const getEmoji = (emo?: string) => {
+    switch ((emo || "보통").trim()) {
+      case "매우 좋음":
+      case "좋음":
+        return "😊";
+      case "나쁨":
+      case "매우 나쁨":
+        return "😢";
+      case "보통":
+      default:
+        return "😐";
+    }
+  };
+
+  const handleNext = () => {
+    (navigation as any).navigate("WeeklyFeedbackPage2", { feedbackData });
+  };
+
   return (
-    <Container>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Header style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+    <Container style={{ backgroundColor: "#FFFFFF" }}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
+        {/* 헤더 */}
+        <Header style={{ flexDirection: "row", alignItems: "center", marginBottom: 16 }}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 16 }}>
             <Ionicons name="chevron-back" size={24} color="#333" />
           </TouchableOpacity>
-          <View style={{ flex: 1 }}>
-            <Title style={{ marginBottom: 4 }}>주간 피드백</Title>
-            <Subtitle>나의 피드백을 확인해보세요.</Subtitle>
+          <View>
+            <Title>주간 피드백</Title>
+            <Subtitle>이번 주 결과를 확인해 주세요.</Subtitle>
           </View>
         </Header>
 
-        <MenuContainer>
-          <QuizContainer style={{ padding: 40, alignItems: 'center', justifyContent: 'center', minHeight: 400 }}>
-            {loading ? (
-              <Text style={{ fontSize: 18, color: '#666' }}>주간 피드백을 불러오는 중...</Text>
-            ) : feedback ? (
-              <>
-                <Image 
-                  source={getEmotionImage(feedback.averageEmotion)} 
-                  style={{ width: 120, height: 120, marginBottom: 32 }} 
-                  resizeMode="contain"
-                />
-                
-                <Text style={{ 
-                  fontSize: 20, 
-                  fontWeight: '600', 
-                  textAlign: 'center',
-                  color: '#007BFF',
-                  marginBottom: 16
-                }}>
-                  {feedback.averageEmotion}
-                </Text>
-                
-                <Text style={{ 
-                  fontSize: 14, 
-                  fontWeight: '400', 
-                  textAlign: 'center',
-                  color: '#333',
-                  lineHeight: 28
-                }}>
-                  {feedback.feedback}
-                </Text>
-              </>
-            ) : (
-              <Text style={{ fontSize: 18, color: '#666' }}>주간 피드백을 불러올 수 없습니다.</Text>
-            )}
-          </QuizContainer>
-        </MenuContainer>
+        <View
+          style={{
+            backgroundColor: "#FFFFFF",
+            borderRadius: 24,
+            padding: 40,
+            margin: 20,
+            alignItems: "center",
+            shadowColor: "#000",
+            shadowOpacity: 0.1,
+            shadowRadius: 8,
+            elevation: 2,
+          }}
+        >
+          {/* 이모지 */}
+          <Text style={{ fontSize: 96, marginBottom: 24 }}>
+            {loading ? "😐" : getEmoji(feedbackData?.emotion)}
+          </Text>
 
-        {feedback && !loading && (
-          <View style={{ padding: 16, paddingBottom: 40 }}>
-            <Button onPress={handleNext}>
-              <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>다음으로</Text>
-            </Button>
-          </View>
-        )}
+          <Text
+            style={{
+              fontSize: 20,
+              fontFamily: "Pretendard-Bold",
+              color: "#191F28",
+              marginBottom: 12,
+              textAlign: "center",
+            }}
+          >
+            {loading ? "로딩 중..." : feedbackData?.summary || "이번 주는 평범했어요."}
+          </Text>
 
-        <View style={{ alignItems: 'center', marginBottom: 20 }}>
-          <Text style={{ color: '#999', fontSize: 12 }}>Developed by Oh yun chan</Text>
+          {!loading &&
+            (feedbackData?.details || []).map((line: string, idx: number) => (
+              <Text
+                key={idx}
+                style={{
+                  fontSize: 14,
+                  fontFamily: "Pretendard-Regular",
+                  color: "#6B7684",
+                  textAlign: "center",
+                  lineHeight: 20,
+                  marginBottom: 8,
+                }}
+              >
+                {line}
+              </Text>
+            ))}
         </View>
+
+        <Button
+          onPress={handleNext}
+          style={{ margin: 20, marginTop: 0, opacity: loading ? 0.5 : 1 }}
+          disabled={loading}
+        >
+          <ButtonText>다음으로</ButtonText>
+        </Button>
       </ScrollView>
     </Container>
   );

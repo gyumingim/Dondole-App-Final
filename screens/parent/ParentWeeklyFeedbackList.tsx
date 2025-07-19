@@ -14,12 +14,11 @@ import { api } from "../../utils/api";
 
 interface WeeklyFeedback {
   id: number;
-  weekStartDate: string;
-  weekEndDate: string;
-  overallEmotion: string;
-  feedback: string;
-  totalExpense: number;
-  averageDaily: number;
+  content: string;
+  emotion: string;
+  advice: string | null;
+  category: "WEEKLY";
+  createdAt: string;
 }
 
 export default function ParentWeeklyFeedbackList({ navigation }: { navigation: any }) {
@@ -35,47 +34,21 @@ export default function ParentWeeklyFeedbackList({ navigation }: { navigation: a
       const selectedChildId = await AsyncStorage.getItem("selectedChildId");
       if (selectedChildId) {
         try {
-          const response = await api.get(`/feedback/weekly/${selectedChildId}`);
-          setFeedbacks(response.data);
+          const response = await api.get<WeeklyFeedback[]>(`/feedback/weekly/${selectedChildId}`);
+          console.log("weekly feedback", response.data);
+          const sorted = response.data.sort((a,b)=> new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+          setFeedbacks(sorted);
         } catch (apiError) {
           console.log("API에서 데이터를 가져올 수 없어 더미 데이터를 사용합니다.");
           // API 실패 시 더미 데이터 사용
           setFeedbacks([
             {
               id: 1,
-              weekStartDate: "2024-01-15",
-              weekEndDate: "2024-01-21",
-              overallEmotion: "happy",
-              feedback: "이번 주는 계획적으로 잘 사용했어요!",
-              totalExpense: 105000,
-              averageDaily: 15000
-            },
-            {
-              id: 2,
-              weekStartDate: "2024-01-08",
-              weekEndDate: "2024-01-14",
-              overallEmotion: "soso",
-              feedback: "조금 더 절약할 수 있을 것 같아요.",
-              totalExpense: 140000,
-              averageDaily: 20000
-            },
-            {
-              id: 3,
-              weekStartDate: "2024-01-01",
-              weekEndDate: "2024-01-07",
-              overallEmotion: "sad",
-              feedback: "충동구매가 많았던 한 주였어요.",
-              totalExpense: 210000,
-              averageDaily: 30000
-            },
-            {
-              id: 4,
-              weekStartDate: "2023-12-25",
-              weekEndDate: "2023-12-31",
-              overallEmotion: "happy",
-              feedback: "연말을 알차게 보냈어요.",
-              totalExpense: 95000,
-              averageDaily: 13500
+              content: "이번 주는 돈을 잘 관리했어요!",
+              emotion: "좋음",
+              advice: null,
+              category: "WEEKLY",
+              createdAt: "2024-01-21T00:00:00Z"
             }
           ]);
         }
@@ -86,30 +59,11 @@ export default function ParentWeeklyFeedbackList({ navigation }: { navigation: a
       setFeedbacks([
         {
           id: 1,
-          weekStartDate: "2024-01-15",
-          weekEndDate: "2024-01-21",
-          overallEmotion: "happy",
-          feedback: "이번 주는 계획적으로 잘 사용했어요!",
-          totalExpense: 105000,
-          averageDaily: 15000
-        },
-        {
-          id: 2,
-          weekStartDate: "2024-01-08",
-          weekEndDate: "2024-01-14",
-          overallEmotion: "soso",
-          feedback: "조금 더 절약할 수 있을 것 같아요.",
-          totalExpense: 140000,
-          averageDaily: 20000
-        },
-        {
-          id: 3,
-          weekStartDate: "2024-01-01",
-          weekEndDate: "2024-01-07",
-          overallEmotion: "sad",
-          feedback: "충동구매가 많았던 한 주였어요.",
-          totalExpense: 210000,
-          averageDaily: 30000
+          content: "이번 주는 돈을 잘 관리했어요!",
+          emotion: "좋음",
+          advice: null,
+          category: "WEEKLY",
+          createdAt: "2024-01-21T00:00:00Z"
         }
       ]);
     } finally {
@@ -118,22 +72,22 @@ export default function ParentWeeklyFeedbackList({ navigation }: { navigation: a
   };
 
   const getEmotionIcon = (emotion: string) => {
-    switch (emotion) {
-      case 'happy':
+    switch (emotion.trim()) {
+      case '좋음':
+      case '매우 좋음':
         return '😊';
-      case 'soso':
-        return '😐';
-      case 'sad':
+      case '나쁨':
+      case '매우 나쁨':
         return '😢';
+      case '보통':
       default:
         return '😐';
     }
   };
 
-  const formatWeekRange = (startDate: string, endDate: string) => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    return `${start.getMonth() + 1}월 ${start.getDate()}일 - ${end.getMonth() + 1}월 ${end.getDate()}일`;
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return `${date.getMonth() + 1}월 ${date.getDate()}일`;
   };
 
   return (
@@ -172,10 +126,7 @@ export default function ParentWeeklyFeedbackList({ navigation }: { navigation: a
             feedbacks.map((feedback) => (
               <MenuCard 
                 key={feedback.id}
-                onPress={() => navigation.navigate("ParentFeedbackDetailPage1", { 
-                  feedbackData: feedback,
-                  isDaily: false 
-                })}
+                onPress={() => navigation.navigate("ParentFeedbackDetailPage1", { feedback })}
                 style={{ marginBottom: 12 }}
               >
                 <View style={{ 
@@ -185,7 +136,7 @@ export default function ParentWeeklyFeedbackList({ navigation }: { navigation: a
                   alignItems: 'center',
                   marginRight: 16
                 }}>
-                  <Text style={{ fontSize: 32 }}>{getEmotionIcon(feedback.overallEmotion)}</Text>
+                  <Text style={{ fontSize: 32 }}>{getEmotionIcon(feedback.emotion)}</Text>
                 </View>
                 <MenuTextContainer>
                   <Text style={{
@@ -194,32 +145,16 @@ export default function ParentWeeklyFeedbackList({ navigation }: { navigation: a
                     color: '#6B7684',
                     marginBottom: 4
                   }}>
-                    {formatWeekRange(feedback.weekStartDate, feedback.weekEndDate)}
+                    {formatDate(feedback.createdAt)}
                   </Text>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
-                    <Text style={{
-                      fontSize: 16,
-                      fontFamily: 'Pretendard-Medium',
-                      color: '#191F28',
-                      marginRight: 8
-                    }}>
-                      총 {(feedback.totalExpense || 0).toLocaleString()}원
-                    </Text>
-                    <Text style={{
-                      fontSize: 14,
-                      fontFamily: 'Pretendard-Regular',
-                      color: '#6B7684'
-                    }}>
-                      일평균 {(feedback.averageDaily || 0).toLocaleString()}원
-                    </Text>
-                  </View>
+                  {/* emotion label already show via emoji; no amount info */}
                   <Text style={{
                     fontSize: 14,
                     fontFamily: 'Pretendard-Regular',
                     color: '#4E5968'
                   }}
                   numberOfLines={1}>
-                    {feedback.feedback}
+                    {feedback.content}
                   </Text>
                 </MenuTextContainer>
                 <Ionicons name="chevron-forward" size={20} color="#D1D6DB" />

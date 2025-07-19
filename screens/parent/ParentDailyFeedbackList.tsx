@@ -14,10 +14,11 @@ import { api } from "../../utils/api";
 
 interface Feedback {
   id: number;
-  date: string;
+  content: string;
   emotion: string;
-  feedback: string;
-  totalExpense: number;
+  advice: string | null;
+  category: "DAILY";
+  createdAt: string;
 }
 
 export default function ParentDailyFeedbackList({ navigation }: { navigation: any }) {
@@ -33,46 +34,21 @@ export default function ParentDailyFeedbackList({ navigation }: { navigation: an
       const selectedChildId = await AsyncStorage.getItem("selectedChildId");
       if (selectedChildId) {
         try {
-          const response = await api.get(`/feedback/daily/${selectedChildId}`);
-          setFeedbacks(response.data);
+          const response = await api.get<Feedback[]>(`/feedback/daily/${selectedChildId}`);
+          console.log("daily feedback", response.data);
+          const sorted = response.data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+          setFeedbacks(sorted);
         } catch (apiError) {
           console.log("API에서 데이터를 가져올 수 없어 더미 데이터를 사용합니다.");
           // API 실패 시 더미 데이터 사용
           setFeedbacks([
             {
               id: 1,
-              date: "2024-01-20",
-              emotion: "happy",
-              feedback: "오늘은 계획적으로 소비했어요!",
-              totalExpense: 15000
-            },
-            {
-              id: 2,
-              date: "2024-01-19",
-              emotion: "soso",
-              feedback: "조금 아쉬운 하루였어요.",
-              totalExpense: 23000
-            },
-            {
-              id: 3,
-              date: "2024-01-18",
-              emotion: "sad",
-              feedback: "충동구매가 있었어요.",
-              totalExpense: 35000
-            },
-            {
-              id: 4,
-              date: "2024-01-17",
-              emotion: "happy",
-              feedback: "용돈을 잘 관리했어요.",
-              totalExpense: 12000
-            },
-            {
-              id: 5,
-              date: "2024-01-16",
-              emotion: "soso",
-              feedback: "보통인 하루였어요.",
-              totalExpense: 18000
+              content: "오늘은 돈을 하나도 안 썼네! 잘했어.",
+              emotion: "좋음",
+              advice: null,
+              category: "DAILY",
+              createdAt: "2024-01-20T00:00:00Z"
             }
           ]);
         }
@@ -83,24 +59,11 @@ export default function ParentDailyFeedbackList({ navigation }: { navigation: an
       setFeedbacks([
         {
           id: 1,
-          date: "2024-01-20",
-          emotion: "happy",
-          feedback: "오늘은 계획적으로 소비했어요!",
-          totalExpense: 15000
-        },
-        {
-          id: 2,
-          date: "2024-01-19",
-          emotion: "soso",
-          feedback: "조금 아쉬운 하루였어요.",
-          totalExpense: 23000
-        },
-        {
-          id: 3,
-          date: "2024-01-18",
-          emotion: "sad",
-          feedback: "충동구매가 있었어요.",
-          totalExpense: 35000
+          content: "오늘은 돈을 하나도 안 썼네!",
+          emotion: "좋음",
+          advice: null,
+          category: "DAILY",
+          createdAt: "2024-01-20T00:00:00Z"
         }
       ]);
     } finally {
@@ -109,13 +72,14 @@ export default function ParentDailyFeedbackList({ navigation }: { navigation: an
   };
 
   const getEmotionIcon = (emotion: string) => {
-    switch (emotion) {
-      case 'happy':
+    switch (emotion.trim()) {
+      case '좋음':
+      case '매우 좋음':
         return '😊';
-      case 'soso':
-        return '😐';
-      case 'sad':
+      case '나쁨':
+      case '매우 나쁨':
         return '😢';
+      case '보통':
       default:
         return '😐';
     }
@@ -162,10 +126,7 @@ export default function ParentDailyFeedbackList({ navigation }: { navigation: an
             feedbacks.map((feedback) => (
               <MenuCard 
                 key={feedback.id}
-                onPress={() => navigation.navigate("ParentFeedbackDetailPage1", { 
-                  feedbackData: feedback,
-                  isDaily: true 
-                })}
+                onPress={() => navigation.navigate("ParentFeedbackDetailPage1", { feedback })}
                 style={{ marginBottom: 12 }}
               >
                 <View style={{ 
@@ -185,14 +146,7 @@ export default function ParentDailyFeedbackList({ navigation }: { navigation: an
                       color: '#191F28',
                       marginRight: 8
                     }}>
-                      {formatDate(feedback.date)}
-                    </Text>
-                    <Text style={{
-                      fontSize: 14,
-                      fontFamily: 'Pretendard-Regular',
-                      color: '#6B7684'
-                    }}>
-                      {(feedback.totalExpense || 0).toLocaleString()}원
+                      {formatDate(feedback.createdAt)}
                     </Text>
                   </View>
                   <Text style={{
@@ -201,7 +155,7 @@ export default function ParentDailyFeedbackList({ navigation }: { navigation: an
                     color: '#4E5968'
                   }}
                   numberOfLines={1}>
-                    {feedback.feedback}
+                    {feedback.content}
                   </Text>
                 </MenuTextContainer>
                 <Ionicons name="chevron-forward" size={20} color="#D1D6DB" />
