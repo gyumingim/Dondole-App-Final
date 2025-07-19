@@ -69,7 +69,7 @@ export default function StartScreen({ navigation }: { navigation: any }) {
                 backgroundColor: selectedRole === "user" ? "#F0F7FF" : "#FFFFFF",
                 marginBottom: 12,
                 flexDirection: 'row',
-                alignItems: 'center'
+                alignItems: 'center',
               }}
             >
               <View style={{ flex: 1 }}>
@@ -78,7 +78,7 @@ export default function StartScreen({ navigation }: { navigation: any }) {
                   금융을 배우고 용돈을 관리해요
                 </OptionDescription>
               </View>
-              <Image source={require("../assets/child.png")} style={{ width: 48, height: 48, marginRight: 8 }} />
+              <Image source={require("../assets/child.png")} style={{ width: 54, height: 54, marginRight: 8 }} />
               {selectedRole === "user" && (
                 <Ionicons name="checkmark-circle" size={24} color="#3182F6" />
               )}
@@ -99,7 +99,7 @@ export default function StartScreen({ navigation }: { navigation: any }) {
                   아이의 금융 교육을 도와줘요
                 </OptionDescription>
               </View>
-              <Image source={require("../assets/parent.png")} style={{ width: 48, height: 48, marginRight: 8 }} />
+              <Image source={require("../assets/parent.png")} style={{ width: 54, height: 54, marginRight: 8 }} />
               {selectedRole === "parent" && (
                 <Ionicons name="checkmark-circle" size={24} color="#3182F6" />
               )}

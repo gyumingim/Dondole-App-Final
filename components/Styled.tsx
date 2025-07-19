@@ -64,7 +64,7 @@ export const OptionsContainer = styled.View`
 export const OptionCard = styled.TouchableOpacity`
   background-color: ${colors.white};
   border-radius: 12px;
-  padding: 20px;
+  padding: 20px 20px 60px 20px;
   margin-bottom: 12px;
   border: 1px solid ${colors.gray7};
 `;
