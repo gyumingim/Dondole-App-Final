@@ -1,6 +1,6 @@
 // src/screens/StartScreen.tsx
 import React, { useCallback, useState } from "react";
-import { TouchableOpacity, View, ScrollView, Text } from "react-native";
+import { TouchableOpacity, View, ScrollView, Text, Image } from "react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { Ionicons } from "@expo/vector-icons";
@@ -67,7 +67,9 @@ export default function StartScreen({ navigation }: { navigation: any }) {
               style={{ 
                 borderColor: selectedRole === "user" ? "#3182F6" : "#F2F4F6",
                 backgroundColor: selectedRole === "user" ? "#F0F7FF" : "#FFFFFF",
-                marginBottom: 12
+                marginBottom: 12,
+                flexDirection: 'row',
+                alignItems: 'center'
               }}
             >
               <View style={{ flex: 1 }}>
@@ -76,6 +78,7 @@ export default function StartScreen({ navigation }: { navigation: any }) {
                   금융을 배우고 용돈을 관리해요
                 </OptionDescription>
               </View>
+              <Image source={require("../assets/child.png")} style={{ width: 48, height: 48, marginRight: 8 }} />
               {selectedRole === "user" && (
                 <Ionicons name="checkmark-circle" size={24} color="#3182F6" />
               )}
@@ -85,7 +88,9 @@ export default function StartScreen({ navigation }: { navigation: any }) {
               onPress={() => setSelectedRole("parent")}
               style={{ 
                 borderColor: selectedRole === "parent" ? "#3182F6" : "#F2F4F6",
-                backgroundColor: selectedRole === "parent" ? "#F0F7FF" : "#FFFFFF"
+                backgroundColor: selectedRole === "parent" ? "#F0F7FF" : "#FFFFFF",
+                flexDirection: 'row',
+                alignItems: 'center'
               }}
             >
               <View style={{ flex: 1 }}>
@@ -94,6 +99,7 @@ export default function StartScreen({ navigation }: { navigation: any }) {
                   아이의 금융 교육을 도와줘요
                 </OptionDescription>
               </View>
+              <Image source={require("../assets/family.png")} style={{ width: 48, height: 48, marginRight: 8 }} />
               {selectedRole === "parent" && (
                 <Ionicons name="checkmark-circle" size={24} color="#3182F6" />
               )}
