@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView } from "react-native";
+import { ScrollView, View, Text, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome5, MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import {
   Container,
   Header,
+  Title,
+  Subtitle,
   BalanceContainer,
   BalanceHeader,
   PiggyBank,
@@ -61,85 +63,146 @@ export default function ChildDashboardScreen({ navigation }: { navigation: any }
     fetchUserInfo();
   }, []);
 
+  const getProgressPercentage = () => {
+    if (!userInfo || userInfo.expectedAssets === 0) return 0;
+    return Math.min((userInfo.assets / userInfo.expectedAssets) * 100, 100);
+  };
+
   return (
     <Container>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
         <Header>
-          <BalanceContainer>
-            <BalanceHeader>
-              <PiggyBank
-                source={require("../../assets/piggy.png")}
-              />
-              <BalanceInfo>
-                <BalanceTitle>
-                  {loading ? "불러오는 중..." : `${userInfo?.name || "사용자"}님의 잔여금액`}
-                </BalanceTitle>
-                <BalanceAmount>
-                  {loading ? "..." : `${(userInfo?.expectedAssets || 0).toLocaleString()}원 | ${(userInfo?.assets || 0).toLocaleString()}원`}
-                </BalanceAmount>
-              </BalanceInfo>
-            </BalanceHeader>
-          </BalanceContainer>
+          <Title>{loading ? "..." : `${userInfo?.name || "친구"}`}</Title>
+          <Subtitle>오늘도 똑똑한 소비 하자</Subtitle>
         </Header>
+        
+        <View style={{ paddingHorizontal: 20, marginBottom: 20 }}>
+          <View style={{
+            backgroundColor: '#FFFFFF',
+            borderRadius: 16,
+            padding: 20,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderWidth: 1,
+            borderColor: '#F2F4F6'
+          }}>
+            <View style={{ flex: 1 }}>
+              <Text style={{
+                fontSize: 13,
+                fontFamily: 'Pretendard-Regular',
+                color: '#6B7684',
+                marginBottom: 4
+              }}>
+                {loading ? "..." : `${userInfo?.name || "나"}의 잔여금액`}
+              </Text>
+              <Text style={{
+                fontSize: 24,
+                fontFamily: 'Pretendard-Bold',
+                color: '#191F28',
+                marginBottom: 2
+              }}>
+                {loading ? "..." : `${(userInfo?.assets || 0).toLocaleString()}원`}
+              </Text>
+              <Text style={{
+                fontSize: 13,
+                fontFamily: 'Pretendard-Regular',
+                color: '#6B7684'
+              }}>
+                {loading ? "..." : `${(userInfo?.expectedAssets || 0).toLocaleString()}원`}
+              </Text>
+            </View>
+            <View style={{ marginLeft: 16 }}>
+              <Text style={{ fontSize: 48 }}>🐷</Text>
+            </View>
+          </View>
+        </View>
 
-        <MenuContainer>
-          <MenuCard onPress={() => navigation.navigate("DonationCalendar")}>  
-            <MenuIconContainer>
-              <FontAwesome5 name="hand-holding-heart" size={24} color="#4CAF50" />
-            </MenuIconContainer>
-            <MenuTextContainer>
-              <MenuTitle>고정 지출</MenuTitle>
-              <MenuDescription>고정 지출을 설정하고 관리해요.</MenuDescription>
-            </MenuTextContainer>
-          </MenuCard>
+        <View style={{ paddingTop: 4 }}>
+          <Text style={{ 
+            fontSize: 13,
+            fontFamily: 'Pretendard-Regular',
+            color: '#6B7684',
+            paddingHorizontal: 20,
+            marginBottom: 12
+          }}>
+            오늘 할 일
+          </Text>
 
-          <MenuCard onPress={() => navigation.navigate("TodayCalendar")}>  
-            <MenuIconContainer>
-              <FontAwesome5 name="shopping-bag" size={24} color="#FF9800" />
-            </MenuIconContainer>
-            <MenuTextContainer>
-              <MenuTitle>오늘의 소비</MenuTitle>
-              <MenuDescription>오늘의 나의 소비를 확인해요.</MenuDescription>
-            </MenuTextContainer>
-          </MenuCard>
+          <MenuContainer>
+            <MenuCard onPress={() => navigation.navigate("DonationCalendar")}>  
+              <MenuIconContainer style={{ backgroundColor: '#E3F2FD' }}>
+                <FontAwesome5 name="calendar-check" size={18} color="#1976D2" />
+              </MenuIconContainer>
+              <MenuTextContainer>
+                <MenuTitle>고정 지출</MenuTitle>
+                <MenuDescription>매달 나가는 돈 관리</MenuDescription>
+              </MenuTextContainer>
+              <Ionicons name="chevron-forward" size={20} color="#D1D6DB" />
+            </MenuCard>
 
-          <MenuCard onPress={() => navigation.navigate("FinancialQuiz")}>  
-            <MenuIconContainer>
-              <MaterialCommunityIcons name="comment-question" size={24} color="#2196F3" />
-            </MenuIconContainer>
-            <MenuTextContainer>
-              <MenuTitle>금융 퀴즈</MenuTitle>
-              <MenuDescription>지식을 쌓고, 금융 지식을 쌓아요.</MenuDescription>
-            </MenuTextContainer>
-          </MenuCard>
-        </MenuContainer>
+            <MenuCard onPress={() => navigation.navigate("TodayCalendar")}>  
+              <MenuIconContainer style={{ backgroundColor: '#FFF3E0' }}>
+                <FontAwesome5 name="shopping-bag" size={18} color="#F57C00" />
+              </MenuIconContainer>
+              <MenuTextContainer>
+                <MenuTitle>오늘의 소비</MenuTitle>
+                <MenuDescription>오늘 사용한 돈 기록</MenuDescription>
+              </MenuTextContainer>
+              <Ionicons name="chevron-forward" size={20} color="#D1D6DB" />
+            </MenuCard>
 
-        {/* 피드백 버튼들 */}
-        <MenuContainer style={{ flexDirection: 'row', gap: 12, marginTop: 20 }}>
-          <MenuCard 
-            onPress={() => navigation.navigate("DailyFeedbackPage1")}
-            style={{ flex: 1, paddingVertical: 20 }}
-          >
-            <MenuIconContainer style={{ backgroundColor: '#FF9800', marginBottom: 8 }}>
-              <Ionicons name="calendar-outline" size={16} color="#fff" />
-            </MenuIconContainer>
-            <MenuTextContainer style={{ alignItems: 'center' }}>
-              <MenuTitle style={{ textAlign: 'center' }}>매일 피드백</MenuTitle>
-            </MenuTextContainer>
-          </MenuCard>
+            <MenuCard onPress={() => navigation.navigate("FinancialQuizSelection")}>  
+              <MenuIconContainer style={{ backgroundColor: '#E8F5E9' }}>
+                <MaterialCommunityIcons name="school" size={20} color="#388E3C" />
+              </MenuIconContainer>
+              <MenuTextContainer>
+                <MenuTitle>금융 퀴즈</MenuTitle>
+                <MenuDescription>재미있게 배우는 돈 이야기</MenuDescription>
+              </MenuTextContainer>
+              <Ionicons name="chevron-forward" size={20} color="#D1D6DB" />
+            </MenuCard>
+          </MenuContainer>
+        </View>
 
-          <MenuCard 
-            onPress={() => navigation.navigate("WeeklyFeedbackPage1")}
-            style={{ flex: 1, paddingVertical: 20 }}
-          >
-            <MenuIconContainer style={{ backgroundColor: '#9C27B0', marginBottom: 8 }}>
-              <Ionicons name="stats-chart-outline" size={16} color="#fff" />
-            </MenuIconContainer>
-            <MenuTextContainer style={{ alignItems: 'center' }}>
-              <MenuTitle style={{ textAlign: 'center' }}>주간 피드백</MenuTitle>
-            </MenuTextContainer>
-          </MenuCard>
-        </MenuContainer>
+        <View style={{ paddingTop: 20 }}>
+          <Text style={{ 
+            fontSize: 13,
+            fontFamily: 'Pretendard-Regular',
+            color: '#6B7684',
+            paddingHorizontal: 20,
+            marginBottom: 12
+          }}>
+            피드백
+          </Text>
+
+          <MenuContainer>
+            <MenuCard onPress={() => navigation.navigate("DailyFeedbackPage1")}>
+              <MenuIconContainer style={{ backgroundColor: '#F3E5F5' }}>
+                <Ionicons name="today" size={20} color="#7B1FA2" />
+              </MenuIconContainer>
+              <MenuTextContainer>
+                <MenuTitle>오늘의 피드백</MenuTitle>
+                <MenuDescription>오늘 하루 돌아보기</MenuDescription>
+              </MenuTextContainer>
+              <Ionicons name="chevron-forward" size={20} color="#D1D6DB" />
+            </MenuCard>
+
+            <MenuCard onPress={() => navigation.navigate("WeeklyFeedbackPage1")}>
+              <MenuIconContainer style={{ backgroundColor: '#FCE4EC' }}>
+                <Ionicons name="trending-up" size={20} color="#C2185B" />
+              </MenuIconContainer>
+              <MenuTextContainer>
+                <MenuTitle>이번 주 성적표</MenuTitle>
+                <MenuDescription>일주일 소비 분석</MenuDescription>
+              </MenuTextContainer>
+              <Ionicons name="chevron-forward" size={20} color="#D1D6DB" />
+            </MenuCard>
+          </MenuContainer>
+        </View>
       </ScrollView>
     </Container>
   );

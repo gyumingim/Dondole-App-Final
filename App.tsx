@@ -23,7 +23,10 @@ import ParentFixedExpenseScreen from "./screens/parent/ParentFixedExpenseScreen"
 import ParentExpenseScreen from "./screens/parent/ParentExpenseScreen"
 import ParentDailyFeedbackScreen from "./screens/parent/ParentDailyFeedbackScreen"
 import ParentWeeklyFeedbackScreen from "./screens/parent/ParentWeeklyFeedbackScreen"
-import ParentFeedbackDetailScreen from "./screens/parent/ParentFeedbackDetailScreen"
+import ParentFeedbackDetailPage1 from "./screens/parent/ParentFeedbackDetailPage1"
+import ParentFeedbackDetailPage2 from "./screens/parent/ParentFeedbackDetailPage2"
+import ParentDailyFeedbackList from "./screens/parent/ParentDailyFeedbackList";
+import ParentWeeklyFeedbackList from "./screens/parent/ParentWeeklyFeedbackList";
 import ChildDashboardScreen from "./screens/child/ChildDashboardScreen"
 
 import TodayRegistrationScreen from "./screens/TodayRegistrationScreen"
@@ -87,7 +90,10 @@ export default function App() {
             <Stack.Screen name="ParentExpense" component={ParentExpenseScreen} />
             <Stack.Screen name="ParentDailyFeedback" component={ParentDailyFeedbackScreen} />
             <Stack.Screen name="ParentWeeklyFeedback" component={ParentWeeklyFeedbackScreen} />
-            <Stack.Screen name="ParentFeedbackDetail" component={ParentFeedbackDetailScreen} />
+            <Stack.Screen name="ParentFeedbackDetailPage1" component={ParentFeedbackDetailPage1} />
+            <Stack.Screen name="ParentFeedbackDetailPage2" component={ParentFeedbackDetailPage2} />
+            <Stack.Screen name="ParentDailyFeedbackList" component={ParentDailyFeedbackList} />
+            <Stack.Screen name="ParentWeeklyFeedbackList" component={ParentWeeklyFeedbackList} />
             <Stack.Screen name="ParentDashboard" component={ParentDashboardScreen} />
             <Stack.Screen name="ChildDashboard" component={ChildDashboardScreen} />
 
@@ -98,6 +104,7 @@ export default function App() {
             <Stack.Screen name="Dashboard" component={ChildDashboardScreen} />
             <Stack.Screen name="TodayRegistration" component={TodayRegistrationScreen} />
             <Stack.Screen name="TodayCalendar" component={TodayCalendarScreen} />
+            <Stack.Screen name="FinancialQuizSelection" component={require('./screens/FinancialQuizSelectionScreen').default} />
             <Stack.Screen name="FinancialQuiz" component={FinancialQuizScreen} />
             <Stack.Screen name="DonationRegistration" component={DonationRegistrationScreen} />
             <Stack.Screen name="DonationCalendar" component={DonationCalendarScreen} />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView, TouchableOpacity, View, Text } from "react-native";
+import { ScrollView, TouchableOpacity, View, Text, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
@@ -8,10 +8,8 @@ import {
   Title,
   Subtitle,
   MenuContainer,
-  MenuCard,
-  MenuTextContainer,
-  MenuTitle,
-  MenuDescription,
+  QuizContainer,
+  Button,
 } from "../../components/Styled";
 import { api } from "../../utils/api";
 
@@ -26,28 +24,32 @@ interface WeeklyFeedback {
 
 export default function ParentWeeklyFeedbackScreen({ navigation }: { navigation: any }) {
   const [feedbacks, setFeedbacks] = useState<WeeklyFeedback[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchWeeklyFeedbacks = async () => {
+    const fetchWeeklyFeedback = async () => {
       try {
         setLoading(true);
-        const userId = await AsyncStorage.getItem("selectedChildId");
-        if (!userId) {
-          console.error("[ParentWeeklyFeedback] selectedChildId가 없습니다.");
+        
+        // AsyncStorage에서 selectedChildId 가져오기
+        const selectedChildId = await AsyncStorage.getItem("selectedChildId");
+        if (!selectedChildId) {
+          console.error("선택된 자녀 ID가 없습니다.");
+          setFeedbacks([]);
           return;
         }
         
-        const response = await api.get<WeeklyFeedback[]>(`/feedback/weekly/${userId}`);
+        const response = await api.get<WeeklyFeedback[]>(`/feedback/weekly/${selectedChildId}`);
         setFeedbacks(response.data);
       } catch (error) {
         console.error("[ParentWeeklyFeedback] 주간 피드백 조회 실패", error);
+        setFeedbacks([]);
       } finally {
         setLoading(false);
       }
     };
-
-    fetchWeeklyFeedbacks();
+    fetchWeeklyFeedback();
   }, []);
 
   const formatDate = (dateString: string) => {
@@ -55,22 +57,40 @@ export default function ParentWeeklyFeedbackScreen({ navigation }: { navigation:
     return `${date.getMonth() + 1}월 ${date.getDate()}일`;
   };
 
-  const getEmotionColor = (emotion: string) => {
+  const getEmotionImage = (emotion: string) => {
     switch (emotion) {
       case "좋음":
-        return "#4CAF50";
+        return require("../../assets/happy.png");
       case "보통":
-        return "#FF9800";
+        return require("../../assets/soso.png");
       case "나쁨":
-        return "#F44336";
+        return require("../../assets/sad.png");
       default:
-        return "#9E9E9E";
+        return require("../../assets/happy.png");
     }
   };
 
+  const handleNext = () => {
+    if (currentIndex < feedbacks.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
+
+  const currentFeedback = feedbacks[currentIndex];
+
   return (
     <Container>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={{ paddingBottom: 20 }}
+      >
         <Header style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 16 }}>
             <Ionicons name="chevron-back" size={24} color="#333" />
@@ -82,75 +102,114 @@ export default function ParentWeeklyFeedbackScreen({ navigation }: { navigation:
         </Header>
 
         <MenuContainer>
-          {loading ? (
-            <View style={{ 
-              padding: 40, 
-              alignItems: 'center', 
-              justifyContent: 'center' 
-            }}>
-              <Text style={{ 
-                color: '#999', 
-                fontSize: 16, 
-                textAlign: 'center' 
-              }}>
-                주간 피드백을 불러오는 중...
-              </Text>
-            </View>
-          ) : feedbacks.length === 0 ? (
-            <View style={{ 
-              padding: 40, 
-              alignItems: 'center', 
-              justifyContent: 'center' 
-            }}>
-              <Text style={{ 
-                color: '#999', 
-                fontSize: 16, 
-                textAlign: 'center' 
-              }}>
-                아직 주간 피드백이 없습니다.
-              </Text>
-            </View>
-          ) : (
-            feedbacks.map((feedback) => (
-              <MenuCard 
-                key={feedback.id}
-                onPress={() => navigation.navigate("ParentFeedbackDetail", { feedback })}
-              >
-                <MenuTextContainer style={{ flex: 1 }}>
-                  <MenuTitle style={{ marginBottom: 8 }}>{feedback.content}</MenuTitle>
-                  <MenuDescription style={{ marginBottom: 8 }}>
-                    {formatDate(feedback.createdAt)}
-                  </MenuDescription>
-                  {feedback.advice && (
-                    <MenuDescription style={{ 
-                      fontStyle: 'italic', 
-                      color: '#007BFF',
-                      marginTop: 4 
-                    }}>
-                      조언: {feedback.advice}
-                    </MenuDescription>
-                  )}
-                </MenuTextContainer>
-                <View style={{ 
-                  backgroundColor: getEmotionColor(feedback.emotion),
-                  paddingHorizontal: 12,
-                  paddingVertical: 6,
-                  borderRadius: 12,
-                  minWidth: 50,
-                  alignItems: 'center'
+          <QuizContainer style={{ padding: 40, alignItems: 'center', justifyContent: 'center', minHeight: 400 }}>
+            {loading ? (
+              <Text style={{ fontSize: 18, color: '#666' }}>피드백을 불러오는 중...</Text>
+            ) : feedbacks.length === 0 ? (
+              <Text style={{ fontSize: 18, color: '#666' }}>아직 주간 피드백이 없습니다.</Text>
+            ) : currentFeedback ? (
+              <>
+                <Image 
+                  source={getEmotionImage(currentFeedback.emotion)} 
+                  style={{ width: 120, height: 120, marginBottom: 32 }} 
+                  resizeMode="contain"
+                />
+                
+                <Text style={{ 
+                  fontSize: 20, 
+                  fontWeight: '600', 
+                  textAlign: 'center',
+                  color: '#007BFF',
+                  marginBottom: 16
                 }}>
-                  <Text style={{ 
-                    color: '#fff', 
-                    fontSize: 12, 
-                    fontWeight: '600' 
+                  {currentFeedback.emotion}
+                </Text>
+
+                <Text style={{ 
+                  fontSize: 14, 
+                  color: '#999',
+                  marginBottom: 16
+                }}>
+                  {formatDate(currentFeedback.createdAt)}
+                </Text>
+                
+                <Text style={{ 
+                  fontSize: 16, 
+                  fontWeight: '400', 
+                  textAlign: 'center',
+                  color: '#333',
+                  lineHeight: 28,
+                  marginBottom: 24
+                }}>
+                  {currentFeedback.content}
+                </Text>
+
+                {currentFeedback.advice && (
+                  <View style={{
+                    backgroundColor: '#E3F2FD',
+                    padding: 16,
+                    borderRadius: 12,
+                    width: '100%'
                   }}>
-                    {feedback.emotion}
-                  </Text>
-                </View>
-              </MenuCard>
-            ))
-          )}
+                    <Text style={{ 
+                      fontSize: 14, 
+                      color: '#1976D2',
+                      textAlign: 'center',
+                      lineHeight: 22
+                    }}>
+                      💡 {currentFeedback.advice}
+                    </Text>
+                  </View>
+                )}
+              </>
+            ) : null}
+          </QuizContainer>
         </MenuContainer>
+
+        {feedbacks.length > 0 && !loading && (
+          <>
+            <View style={{ 
+              flexDirection: 'row', 
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingVertical: 16,
+              gap: 24
+            }}>
+              <TouchableOpacity 
+                onPress={handlePrev}
+                disabled={currentIndex === 0}
+                style={{ opacity: currentIndex === 0 ? 0.3 : 1 }}
+              >
+                <Ionicons name="chevron-back-circle" size={36} color="#007BFF" />
+              </TouchableOpacity>
+              
+              <Text style={{ 
+                fontSize: 14, 
+                color: '#666' 
+              }}>
+                {currentIndex + 1} / {feedbacks.length}
+              </Text>
+              
+              <TouchableOpacity 
+                onPress={handleNext}
+                disabled={currentIndex === feedbacks.length - 1}
+                style={{ opacity: currentIndex === feedbacks.length - 1 ? 0.3 : 1 }}
+              >
+                <Ionicons name="chevron-forward-circle" size={36} color="#007BFF" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={{ padding: 16, paddingBottom: 40 }}>
+              <Button onPress={() => navigation.navigate("ParentFeedbackDetailPage1", { feedback: currentFeedback })}>
+                <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>상세 보기</Text>
+              </Button>
+            </View>
+          </>
+        )}
+
+        <View style={{ alignItems: 'center', marginBottom: 20 }}>
+          <Text style={{ color: '#999', fontSize: 12 }}>Developed by Oh yun chan</Text>
+        </View>
       </ScrollView>
     </Container>
   );

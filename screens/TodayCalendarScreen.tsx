@@ -163,11 +163,11 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
         </DaysContainer>
 
         <SummaryContainer>
-          <SummaryTitle>
-            {loading
-              ? "오늘의 소비 불러오는 중..."
-              : `${year}년 ${month + 1}월 ${selectedDate}일 총 소비: ${totalDailyExpense.toLocaleString()}원`}
-          </SummaryTitle>
+          <Text style={{ fontSize: 16, fontFamily: 'Pretendard-Medium', color: '#333D4B', marginBottom: 8 }}>
+              {selectedDate 
+                ? `${year}년 ${month + 1}월 ${selectedDate}일 총 소비: ${(totalDailyExpense || 0).toLocaleString()}원`
+                : `${year}년 ${month + 1}월 총 소비 내역`}
+            </Text>
           {selectedDateExpenses.length === 0 && !loading && (
             <TransactionAmount style={{ color: "#999" }}>선택된 날짜에 소비 내역이 없습니다.</TransactionAmount>
           )}
@@ -178,8 +178,8 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
               </TransactionIconBlue>
               <TransactionDetails>
                 <TransactionTitle>{expense.content}</TransactionTitle>
-                <TransactionAmount>{`${expense.price.toLocaleString()}원`}</TransactionAmount>
               </TransactionDetails>
+              <TransactionAmount>{`${(expense.price || 0).toLocaleString()}원`}</TransactionAmount>
             </TransactionContainer>
           ))}
         </SummaryContainer>

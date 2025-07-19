@@ -1,131 +1,109 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView, TouchableOpacity, View, Text, Image } from "react-native";
+import { ScrollView, View, Text, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   Container,
   Header,
   Title,
   Subtitle,
-  MenuContainer,
-  QuizContainer,
+  OptionsContainer,
+  OptionCard,
+  OptionTitle,
+  OptionDescription,
+  Emoji,
   Button,
+  ButtonText,
 } from "../../components/Styled";
 import { api } from "../../utils/api";
 
-interface DailyFeedback {
-  feedback: string;
-  score: number;
-  averageEmotion: string;
-  advice: string;
-}
-
-export default function DailyFeedbackPage1({ navigation, route }: { navigation: any; route: any }) {
-  const [feedback, setFeedback] = useState<DailyFeedback | null>(null);
+export default function DailyFeedbackPage1() {
+  const navigation = useNavigation();
+  const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchDailyFeedback = async () => {
-      try {
-        setLoading(true);
-        const response = await api.post("/feedback/daily", {});
-        setFeedback(response.data);
-      } catch (error) {
-        console.error("매일 피드백 조회 실패", error);
-        // 에러 시 기본값 설정
-        setFeedback({
-          feedback: "오늘은 돈을 하나도 안 썼네! 기분이 어땠는지 알려줘서 고마워.",
-          score: 70,
-          averageEmotion: "좋음",
-          advice: "돈을 쓰면 무엇을 샀는지, 기분이 어땠는지 적어보는 연습을 해보자! 궁금한 점이 있으면 언제든지 물어봐."
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDailyFeedback();
-  }, []);
+  const emotions = [
+    { key: "happy", emoji: require("../../assets/happy.png"), title: "좋아요", description: "오늘 하루 기분이 좋았어요" },
+    { key: "soso", emoji: require("../../assets/soso.png"), title: "그저 그래요", description: "평범한 하루였어요" },
+    { key: "sad", emoji: require("../../assets/sad.png"), title: "아쉬워요", description: "조금 아쉬운 하루였어요" },
+  ];
 
-  const getEmotionImage = (emotion: string) => {
-    switch (emotion) {
-      case "좋음":
-        return require("../../assets/happy.png");
-      case "보통":
-        return require("../../assets/soso.png");
-      case "나쁨":
-        return require("../../assets/sad.png");
-      default:
-        return require("../../assets/happy.png");
+  const handleSubmit = async () => {
+    if (!selectedEmotion) {
+      Alert.alert("감정을 선택해주세요", "오늘의 기분을 먼저 선택해주세요.");
+      return;
     }
-  };
 
-  const handleNext = () => {
-    if (feedback) {
-      navigation.navigate('DailyFeedbackPage2', { feedback });
+    try {
+      setLoading(true);
+      
+      // AsyncStorage에서 userId 가져오기
+      const userId = await AsyncStorage.getItem("userId");
+      if (!userId) {
+        Alert.alert("오류", "사용자 정보를 찾을 수 없습니다.");
+        return;
+      }
+      
+      const response = await api.post(`/feedback/daily/${userId}`, {
+        emotion: selectedEmotion
+      });
+      
+      if (response.status === 200) {
+        (navigation as any).navigate("DailyFeedbackPage2", { 
+          emotion: selectedEmotion,
+          feedbackData: response.data 
+        });
+      }
+    } catch (error) {
+      console.error("피드백 제출 실패:", error);
+      Alert.alert("오류", "피드백 제출에 실패했습니다. 다시 시도해주세요.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Container>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Header style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 16 }}>
-            <Ionicons name="chevron-back" size={24} color="#333" />
-          </TouchableOpacity>
-          <View style={{ flex: 1 }}>
-            <Title style={{ marginBottom: 4 }}>매일 피드백</Title>
-            <Subtitle>나의 피드백을 확인해보세요.</Subtitle>
-          </View>
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
+        <Header>
+          <Title>오늘 하루 어땠나요?</Title>
+          <Subtitle>솔직한 마음을 들려주세요</Subtitle>
         </Header>
 
-        <MenuContainer>
-          <QuizContainer style={{ padding: 40, alignItems: 'center', justifyContent: 'center', minHeight: 400 }}>
-            {loading ? (
-              <Text style={{ fontSize: 18, color: '#666' }}>피드백을 불러오는 중...</Text>
-            ) : feedback ? (
-              <>
-                <Image 
-                  source={getEmotionImage(feedback.averageEmotion)} 
-                  style={{ width: 120, height: 120, marginBottom: 32 }} 
-                  resizeMode="contain"
-                />
-                
-                <Text style={{ 
-                  fontSize: 20, 
-                  fontWeight: '600', 
-                  textAlign: 'center',
-                  color: '#007BFF',
-                  marginBottom: 16
-                }}>
-                  {feedback.averageEmotion}
-                </Text>
-                
-                <Text style={{ 
-                  fontSize: 14, 
-                  fontWeight: '400', 
-                  textAlign: 'center',
-                  color: '#333',
-                  lineHeight: 28
-                }}>
-                  {feedback.feedback}
-                </Text>
-              </>
-            ) : (
-              <Text style={{ fontSize: 18, color: '#666' }}>피드백을 불러올 수 없습니다.</Text>
-            )}
-          </QuizContainer>
-        </MenuContainer>
+        <OptionsContainer>
+          {emotions.map((emotion) => (
+            <OptionCard
+              key={emotion.key}
+              onPress={() => setSelectedEmotion(emotion.key)}
+              style={{
+                borderWidth: 2,
+                borderColor: selectedEmotion === emotion.key ? "#3182F6" : "transparent",
+                backgroundColor: selectedEmotion === emotion.key ? "#F0F7FF" : "#FFFFFF"
+              }}
+            >
+              <Emoji source={emotion.emoji} />
+              <View style={{ flex: 1, marginLeft: 16 }}>
+                <OptionTitle>{emotion.title}</OptionTitle>
+                <OptionDescription>{emotion.description}</OptionDescription>
+              </View>
+              {selectedEmotion === emotion.key && (
+                <Ionicons name="checkmark-circle" size={24} color="#3182F6" />
+              )}
+            </OptionCard>
+          ))}
+        </OptionsContainer>
 
-        {feedback && !loading && (
-          <View style={{ padding: 16, paddingBottom: 40 }}>
-            <Button onPress={handleNext}>
-              <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>다음으로</Text>
-            </Button>
-          </View>
-        )}
-
-        <View style={{ alignItems: 'center', marginBottom: 20 }}>
-          <Text style={{ color: '#999', fontSize: 12 }}>Developed by Oh yun chan</Text>
-        </View>
+        <Button 
+          onPress={handleSubmit}
+          disabled={!selectedEmotion || loading}
+          style={{ opacity: (!selectedEmotion || loading) ? 0.5 : 1 }}
+        >
+          <ButtonText>{loading ? "제출 중..." : "다음으로"}</ButtonText>
+        </Button>
       </ScrollView>
     </Container>
   );

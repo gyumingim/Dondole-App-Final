@@ -1,6 +1,6 @@
 // src/screens/LoginScreen.tsx
 import React, { useState } from "react";
-import { ScrollView } from "react-native";
+import { ScrollView, View, Text, KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -21,7 +21,8 @@ import {
   FooterRow,
   FooterText,
   FooterLink,
-  Space
+  Space,
+  ErrorText
 } from "../components/Styled";
 import { login, api } from "../utils/api";
 
@@ -29,16 +30,17 @@ export default function LoginScreen({ navigation }: any) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async () => {
     if (!username || !password) {
-      setError(true);
+      setError("아이디와 비밀번호를 모두 입력해주세요.");
       return;
     }
     try {
       setLoading(true);
+      setError("");
       const response = await login({ username, password });
       if (response.status === 200) {
         // 로그인 성공 후 사용자 정보 조회
@@ -61,10 +63,10 @@ export default function LoginScreen({ navigation }: any) {
           navigation.navigate("ChildDashboard");
         }
       } else {
-        setError(true);
+        setError("로그인에 실패했습니다. 다시 시도해주세요.");
       }
     } catch (e) {
-      setError(true);
+      setError("아이디 또는 비밀번호가 올바르지 않습니다.");
     } finally {
       setLoading(false);
     }
@@ -72,55 +74,90 @@ export default function LoginScreen({ navigation }: any) {
 
   return (
     <Container>
-      <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-        <HeaderCenter>
-          <SubtitleSmall>나를 위한 금융 관리</SubtitleSmall>
-          <TitleLarge>돈돌이</TitleLarge>
-        </HeaderCenter>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <ScrollView 
+          showsVerticalScrollIndicator={false} 
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ flexGrow: 1 }}
+        >
+          <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: 20 }}>
+            <HeaderCenter style={{ marginBottom: 40 }}>
+         
+              <TitleLarge>돈돌이</TitleLarge>
+              <SubtitleSmall style={{ marginTop: 8 }}>똑똑한 금융 습관을 만들어요</SubtitleSmall>
+            </HeaderCenter>
 
-        <Form>
-          <InputContainer>
-            <Label>아이디</Label>
-            <Input
-              placeholder="아이디를 입력해주세요."
-              value={username}
-              onChangeText={setUsername}
-            />
-          </InputContainer>
-
-          <InputContainer>
-            <Label>비밀번호</Label>
-            <PasswordContainer>
-              <PasswordInput
-                placeholder="비밀번호를 입력해주세요."
-                secureTextEntry={!showPassword}
-                value={password}
-                onChangeText={setPassword}
-              />
-              <EyeIcon onPress={() => setShowPassword((v) => !v)}>
-                <Ionicons
-                  name={showPassword ? "eye-off-outline" : "eye-outline"}
-                  size={24}
-                  color={"#ccc"}
+            <Form>
+              <InputContainer>
+                <Label>아이디</Label>
+                <Input
+                  placeholder="아이디를 입력하세요"
+                  value={username}
+                  onChangeText={setUsername}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  style={{
+                    backgroundColor: error ? '#FFF5F5' : '#F9FAFB',
+                    borderColor: error ? '#FF5D5D' : '#E5E8EB'
+                  }}
                 />
-              </EyeIcon>
-            </PasswordContainer>
-          </InputContainer>
+              </InputContainer>
 
-          <Space />
+              <InputContainer>
+                <Label>비밀번호</Label>
+                <PasswordContainer style={{
+                  backgroundColor: error ? '#FFF5F5' : '#F9FAFB',
+                  borderColor: error ? '#FF5D5D' : '#E5E8EB'
+                }}>
+                  <PasswordInput
+                    placeholder="비밀번호를 입력하세요"
+                    secureTextEntry={!showPassword}
+                    value={password}
+                    onChangeText={setPassword}
+                  />
+                  <EyeIcon onPress={() => setShowPassword((v) => !v)}>
+                    <Ionicons
+                      name={showPassword ? "eye-off-outline" : "eye-outline"}
+                      size={20}
+                      color="#8B95A1"
+                    />
+                  </EyeIcon>
+                </PasswordContainer>
+              </InputContainer>
 
-          <Button onPress={handleLogin} disabled={loading}>
-            <ButtonText>로그인 하기</ButtonText>
-          </Button>
-          {error && (<FooterText style={{color: 'red'}}>로그인 실패. 아이디/비밀번호를 확인하세요.</FooterText>)}
-          <FooterRow>
-          <FooterText>아직 회원이 아니신가요?</FooterText>
-          <FooterLink onPress={() => navigation.navigate("Start")}>
-            회원가입하기
-          </FooterLink>
-        </FooterRow>
-        </Form>
-      </ScrollView>
+              {error ? (
+                <View style={{ marginTop: 8, marginBottom: 24 }}>
+                  <ErrorText>{error}</ErrorText>
+                </View>
+              ) : (
+                <View style={{ height: 32 }} />
+              )}
+
+              <Button 
+                onPress={handleLogin} 
+                disabled={loading}
+                style={{
+                  opacity: loading ? 0.7 : 1,
+                  marginHorizontal: 0,
+                  marginBottom: 16
+                }}
+              >
+                <ButtonText>{loading ? "로그인 중..." : "로그인"}</ButtonText>
+              </Button>
+
+              <FooterRow style={{ marginTop: 8 }}>
+                <FooterText>처음이신가요?</FooterText>
+                <TouchableOpacity onPress={() => navigation.navigate("Start")}>
+                  <FooterLink style={{ marginLeft: 4 }}>회원가입</FooterLink>
+                </TouchableOpacity>
+              </FooterRow>
+            </Form>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </Container>
   );
 }

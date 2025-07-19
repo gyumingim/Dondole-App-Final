@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView, TouchableOpacity, View, Text, Image } from "react-native";
+import { ScrollView, TouchableOpacity, View, Text, Image, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
   Container,
@@ -11,6 +11,7 @@ import {
   Button,
 } from "../../components/Styled";
 import { api } from "../../utils/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface WeeklyFeedback {
   feedback: string;
@@ -22,12 +23,18 @@ interface WeeklyFeedback {
 export default function WeeklyFeedbackPage1({ navigation, route }: { navigation: any; route: any }) {
   const [feedback, setFeedback] = useState<WeeklyFeedback | null>(null);
   const [loading, setLoading] = useState(false);
+  const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchWeeklyFeedback = async () => {
       try {
         setLoading(true);
-        const response = await api.post("/feedback/weekly", {});
+        const userId = await AsyncStorage.getItem("userId");
+        if (!userId) {
+          Alert.alert("오류", "사용자 정보를 찾을 수 없습니다.");
+          return;
+        }
+        const response = await api.post(`/feedback/weekly/${userId}`, {});
         setFeedback(response.data);
       } catch (error) {
         console.error("주간 피드백 조회 실패", error);
@@ -63,6 +70,40 @@ export default function WeeklyFeedbackPage1({ navigation, route }: { navigation:
   const handleNext = () => {
     if (feedback) {
       navigation.navigate('WeeklyFeedbackPage2', { feedback });
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedEmotion) {
+      Alert.alert("감정을 선택해주세요", "이번 주 기분을 먼저 선택해주세요.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // AsyncStorage에서 userId 가져오기
+      const userId = await AsyncStorage.getItem("userId");
+      if (!userId) {
+        Alert.alert("오류", "사용자 정보를 찾을 수 없습니다.");
+        return;
+      }
+      
+      const response = await api.post(`/feedback/weekly/${userId}`, {
+        emotion: selectedEmotion
+      });
+      
+      if (response.status === 200) {
+        (navigation as any).navigate("WeeklyFeedbackPage2", { 
+          emotion: selectedEmotion,
+          feedbackData: response.data 
+        });
+      }
+    } catch (error) {
+      console.error("주간 피드백 제출 실패:", error);
+      Alert.alert("오류", "피드백 제출에 실패했습니다. 다시 시도해주세요.");
+    } finally {
+      setLoading(false);
     }
   };
 

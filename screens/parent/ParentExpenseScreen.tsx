@@ -79,8 +79,28 @@ const ParentExpenseScreen: React.FC<Props> = ({ navigation }) => {
           console.error("[ParentExpense] userId가 없습니다.");
           return;
         }
-        const res = await api.get<VariableExpense[]>(`/variables/${userId}`);
-        setExpenses(res.data);
+        
+        // 선택된 날짜를 ISO 형식으로 변환
+        const selectedDateISO = `${year}-${String(month + 1).padStart(2, "0")}-${String(selectedDate).padStart(2, "0")}`;
+        
+        // 날짜 파라미터를 포함하여 API 호출
+        const res = await api.get<VariableExpense[]>(`/variables/${userId}`, {
+          params: { date: selectedDateISO }
+        });
+        console.log("[ParentExpense] API 응답 데이터:", res.data);
+        console.log("[ParentExpense] 요청 날짜:", selectedDateISO);
+        
+        // API가 날짜 필터를 지원하지 않는 경우를 대비한 클라이언트 측 필터링
+        if (res.data && res.data.length > 0 && res.data[0].date) {
+          const filteredData = res.data.filter(expense => {
+            const expenseDate = expense.date.split('T')[0];
+            return expenseDate === selectedDateISO;
+          });
+          setExpenses(filteredData);
+          console.log("[ParentExpense] 클라이언트 필터링 후:", filteredData);
+        } else {
+          setExpenses(res.data);
+        }
       } catch (err) {
         console.error("[ParentExpense] 소비 지출 조회 실패", err);
       } finally {
@@ -89,16 +109,16 @@ const ParentExpenseScreen: React.FC<Props> = ({ navigation }) => {
     }
 
     loadVariableExpenses();
-  }, [currentMonth]);
+  }, [selectedDate, year, month]); // selectedDate 추가하여 날짜 변경 시 재조회
 
   // DERIVED VALUES FOR CURRENTLY SELECTED DATE
   const selectedDateISO = `${year}-${String(month + 1).padStart(2, "0")}-${String(selectedDate).padStart(2, "0")}`;
   
-  // 선택된 날짜의 변동 지출만 필터링
-  const selectedDateExpenses = expenses.filter(expense => {
-    const expenseDate = expense.date.split('T')[0]; // ISO 날짜에서 날짜 부분만 추출
-    return expenseDate === selectedDateISO;
-  });
+  // API에서 이미 필터링된 데이터를 사용하므로 여기서는 단순히 expenses를 사용
+  const selectedDateExpenses = expenses;
+  
+  console.log("[ParentExpense] 선택된 날짜:", selectedDateISO);
+  console.log("[ParentExpense] 표시할 지출 내역:", selectedDateExpenses);
   
   // 선택된 날짜의 총 변동 지출 금액 계산
   const totalDailyExpense = selectedDateExpenses.reduce((sum, expense) => sum + expense.price, 0);
@@ -119,7 +139,11 @@ const ParentExpenseScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <Container>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={{ paddingBottom: 20 }}
+      >
         <Header style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 16 }}>
             <Ionicons name="chevron-back" size={24} color="#333" />
@@ -171,23 +195,23 @@ const ParentExpenseScreen: React.FC<Props> = ({ navigation }) => {
         </DaysContainer>
 
         <SummaryContainer>
-          <SummaryTitle>
-            {loading
-              ? "소비 내역 불러오는 중..."
-              : `${year}년 ${month + 1}월 ${selectedDate}일 총 소비: ${totalDailyExpense.toLocaleString()}원`}
-          </SummaryTitle>
+          <Text style={{ fontSize: 16, fontFamily: 'Pretendard-Medium', color: '#333D4B', marginBottom: 8 }}>
+            {selectedDate 
+              ? `${year}년 ${month + 1}월 ${selectedDate}일 총 소비: ${(totalDailyExpense || 0).toLocaleString()}원`
+              : `${year}년 ${month + 1}월 소비 내역`}
+          </Text>
           {selectedDateExpenses.length === 0 && !loading && (
             <TransactionAmount style={{ color: "#999" }}>선택된 날짜에 소비 내역이 없습니다.</TransactionAmount>
           )}
-          {expenses.map((expense) => (
+          {selectedDateExpenses.map((expense) => (
             <TransactionContainer key={expense.id}>
               <TransactionIconBlue>
                 <Ionicons name="save" size={20} color="#fff" />
               </TransactionIconBlue>
               <TransactionDetails>
                 <TransactionTitle>{expense.content}</TransactionTitle>
-                <TransactionAmount>{`${expense.price.toLocaleString()}원`}</TransactionAmount>
               </TransactionDetails>
+              <TransactionAmount>{`${(expense.price || 0).toLocaleString()}원`}</TransactionAmount>
             </TransactionContainer>
           ))}
         </SummaryContainer>
