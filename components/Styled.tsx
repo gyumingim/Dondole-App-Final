@@ -284,8 +284,8 @@ export const MenuCard = styled.TouchableOpacity`
 `;
 
 export const MenuIconContainer = styled.View`
-  width: 44px;
-  height: 44px;
+  width: 52px;
+  height: 52px;
   border-radius: 10px;
   background-color: ${colors.gray9};
   justify-content: center;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ScrollView, View, Text, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FontAwesome5, MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import {
   Container,
   Header,
@@ -100,7 +100,7 @@ export default function ChildDashboardScreen({ navigation }: { navigation: any }
                 {loading ? "..." : `${userInfo?.name || "나"}의 잔여금액`}
               </Text>
               <Text style={{
-                fontSize: 24,
+                fontSize: 32,
                 fontFamily: 'Pretendard-Bold',
                 color: '#191F28',
                 marginBottom: 2
@@ -116,7 +116,7 @@ export default function ChildDashboardScreen({ navigation }: { navigation: any }
               </Text>
             </View>
             <View style={{ marginLeft: 16 }}>
-              <Text style={{ fontSize: 48 }}>🐷</Text>
+              <Image source={require("../../assets/piggy.png")} style={{ width: 64, height: 64 }} />
             </View>
           </View>
         </View>
@@ -134,8 +134,8 @@ export default function ChildDashboardScreen({ navigation }: { navigation: any }
 
           <MenuContainer>
             <MenuCard onPress={() => navigation.navigate("DonationCalendar")}>  
-              <MenuIconContainer style={{ backgroundColor: '#E3F2FD' }}>
-                <FontAwesome5 name="calendar-check" size={18} color="#1976D2" />
+              <MenuIconContainer>
+                <Image source={require("../../assets/1.png")} style={{ width: 32, height: 32 }} />
               </MenuIconContainer>
               <MenuTextContainer>
                 <MenuTitle>고정 지출</MenuTitle>
@@ -145,8 +145,8 @@ export default function ChildDashboardScreen({ navigation }: { navigation: any }
             </MenuCard>
 
             <MenuCard onPress={() => navigation.navigate("TodayCalendar")}>  
-              <MenuIconContainer style={{ backgroundColor: '#FFF3E0' }}>
-                <FontAwesome5 name="shopping-bag" size={18} color="#F57C00" />
+              <MenuIconContainer>
+                <Image source={require("../../assets/2.png")} style={{ width: 32, height: 32 }} />
               </MenuIconContainer>
               <MenuTextContainer>
                 <MenuTitle>오늘의 소비</MenuTitle>
@@ -156,8 +156,8 @@ export default function ChildDashboardScreen({ navigation }: { navigation: any }
             </MenuCard>
 
             <MenuCard onPress={() => navigation.navigate("FinancialQuizSelection")}>  
-              <MenuIconContainer style={{ backgroundColor: '#E8F5E9' }}>
-                <MaterialCommunityIcons name="school" size={20} color="#388E3C" />
+              <MenuIconContainer>
+                <Image source={require("../../assets/3.png")} style={{ width: 32, height: 32 }} />
               </MenuIconContainer>
               <MenuTextContainer>
                 <MenuTitle>금융 퀴즈</MenuTitle>
@@ -181,8 +181,8 @@ export default function ChildDashboardScreen({ navigation }: { navigation: any }
 
           <MenuContainer>
             <MenuCard onPress={() => navigation.navigate("DailyFeedbackPage1")}>
-              <MenuIconContainer style={{ backgroundColor: '#F3E5F5' }}>
-                <Ionicons name="today" size={20} color="#7B1FA2" />
+              <MenuIconContainer>
+                <Image source={require("../../assets/4.png")} style={{ width: 32, height: 32 }} />
               </MenuIconContainer>
               <MenuTextContainer>
                 <MenuTitle>오늘의 피드백</MenuTitle>
@@ -192,8 +192,8 @@ export default function ChildDashboardScreen({ navigation }: { navigation: any }
             </MenuCard>
 
             <MenuCard onPress={() => navigation.navigate("WeeklyFeedbackPage1")}>
-              <MenuIconContainer style={{ backgroundColor: '#FCE4EC' }}>
-                <Ionicons name="trending-up" size={20} color="#C2185B" />
+              <MenuIconContainer>
+                <Image source={require("../../assets/5.png")} style={{ width: 32, height: 32 }} />
               </MenuIconContainer>
               <MenuTextContainer>
                 <MenuTitle>이번 주 성적표</MenuTitle>
