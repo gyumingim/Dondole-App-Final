@@ -17,9 +17,10 @@ import {
 
 interface Props {
   navigation: any;
+  route: any;
 }
 
-const ExpenseRegistrationScreen: React.FC<Props> = ({ navigation }) => {
+const ExpenseRegistrationScreen: React.FC<Props> = ({ navigation, route }) => {
   const [expenseName, setExpenseName] = useState("");
   const [expenseAmount, setExpenseAmount] = useState("");
   const [expenseEmotion, setExpenseEmotion] = useState<string>("");
@@ -35,12 +36,12 @@ const ExpenseRegistrationScreen: React.FC<Props> = ({ navigation }) => {
       price: Number(expenseAmount) || 0,
       emotion: Number(expenseEmotion) || 0,
       thought: expenseThought,
-      date: new Date().toISOString(),
     };
     try {
       const token = await getStoredToken();
+      console.log("payload", payload);
       await api.post("/variables", payload, {
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        headers: { Authorization: `Bearer ${token}` },
       });
       navigation.navigate("TodayCalendar");
     } catch (err) {

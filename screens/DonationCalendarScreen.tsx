@@ -150,7 +150,6 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
               <DayButton
                 key={dayNumber}
                 onPress={() => {
-                  navigation.navigate('DonationRegistration');
                   setSelectedDate(dayNumber);
                 }}
               >
@@ -160,6 +159,12 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
           })}
         </DaysContainer>
 
+      </ScrollView>
+
+      {/* 플로팅 등록 버튼 */}
+      <AddButton onPress={() => navigation.navigate('DonationRegistration', { selectedDateISO })} style={{ zIndex: 10 }}>
+        <Ionicons name="add" size={28} color="#fff" />
+      </AddButton>
         <SummaryContainer>
           <Text style={{ fontSize: 16, fontFamily: 'Pretendard-Medium', color: '#333D4B', marginBottom: 8 }}>
             {selectedDate 
@@ -181,7 +186,6 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
             </TransactionContainer>
           ))}
         </SummaryContainer>
-      </ScrollView>
     </Container>
   );
 };

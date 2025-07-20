@@ -145,14 +145,13 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
               return <BlankDay key={`blank-${idx}`} />;
             }
             return isSelected ? (
-              <SelectedDay key={dayNumber} onPress={() => navigation.navigate('TodayRegistration')}>
+              <SelectedDay key={dayNumber}>
                 <SelectedDayText>{dayNumber}</SelectedDayText>
               </SelectedDay>
             ) : (
               <DayButton
                 key={dayNumber}
                 onPress={() => {
-                  navigation.navigate('TodayRegistration');
                   setSelectedDate(dayNumber);
                 }}
               >
@@ -161,7 +160,6 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
             );
           })}
         </DaysContainer>
-
         <SummaryContainer>
           <Text style={{ fontSize: 16, fontFamily: 'Pretendard-Medium', color: '#333D4B', marginBottom: 8 }}>
               {selectedDate 
@@ -184,6 +182,13 @@ const ExpenseCalendarScreen: React.FC<Props> = ({ navigation }) => {
           ))}
         </SummaryContainer>
       </ScrollView>
+
+      {/* 플로팅 등록 버튼 */}
+      <AddButton onPress={() => navigation.navigate('TodayRegistration', { selectedDateISO })} style={{ zIndex: 10 }}>
+        <Ionicons name="add" size={28} color="#fff" />
+      </AddButton>
+
+
     </Container>
   );
 };

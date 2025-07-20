@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, ScrollView, Alert } from "react-native";
-import { api, getStoredToken } from "@/utils/api";
+import { getStoredToken } from "@/utils/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   Container,
   Header,
@@ -14,6 +15,7 @@ import {
   ButtonText,
   DevelopedBy,
 } from "@/components/Styled";
+import axios from "axios";
 
 interface Props {
   navigation: any;
@@ -33,10 +35,14 @@ const DonationRegistrationScreen: React.FC<Props> = ({ navigation }) => {
       price: Number(donationAmount) || 0,
       date: new Date().toISOString(),
     };
+    const token = await getStoredToken();
+    console.log("token", token);
+    console.log("payload", payload);
     try {
-      const token = await getStoredToken();
-      await api.post("/fixed", payload, {
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      await axios.post(`http://15.164.98.121:8080/fixed`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       navigation.navigate("DonationCalendar");
     } catch (err) {
