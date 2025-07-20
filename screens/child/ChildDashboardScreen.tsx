@@ -196,7 +196,7 @@ export default function ChildDashboardScreen({ navigation }: { navigation: any }
                 <Image source={require("../../assets/5.png")} style={{ width: 32, height: 32 }} />
               </MenuIconContainer>
               <MenuTextContainer>
-                <MenuTitle>이번 주 성적표</MenuTitle>
+                <MenuTitle>주간 피드백</MenuTitle>
                 <MenuDescription>일주일 소비 분석</MenuDescription>
               </MenuTextContainer>
               <Ionicons name="chevron-forward" size={20} color="#D1D6DB" />

@@ -184,7 +184,7 @@ export default function ParentDashboardScreen({ navigation }: { navigation: any 
                 <Image source={require("../../assets/5.png")} style={{ width: 32, height: 32 }} />
               </MenuIconContainer>
               <MenuTextContainer>
-                <MenuTitle>주간 리포트</MenuTitle>
+                <MenuTitle>주간 피드백</MenuTitle>
                 <MenuDescription>한 주 소비 트렌드</MenuDescription>
               </MenuTextContainer>
               <Ionicons name="chevron-forward" size={20} color="#D1D6DB" />

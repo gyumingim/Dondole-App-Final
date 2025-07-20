@@ -11,7 +11,7 @@ import {
   Button,
   ButtonText,
 } from "../../components/Styled";
-import { api } from "../../utils/api";
+import { api, getStoredToken } from "../../utils/api";
 
 export default function DailyFeedbackPage1() {
   const navigation = useNavigation();
@@ -26,35 +26,21 @@ export default function DailyFeedbackPage1() {
   const fetchDailyFeedback = async () => {
     try {
       const url = "http://15.164.98.121:8080/feedback/daily";
-      const res = await api.get(url);
-      const arr = res.data;
-      if (Array.isArray(arr) && arr.length > 0) {
-        // createdAt 기준 내림차순 정렬 후 첫 번째(가장 최신)
-        const latest = arr.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
-
-        // emotion → summary 매핑
-        const emotionMap: Record<string, string> = {
-          "좋음": "오늘은 기분이 좋았어요.",
-          " 보통": "오늘은 평범해요.",
-          "보통": "오늘은 평범해요.",
-          "아쉬움": "오늘은 아쉬웠어요.",
-          "나쁨": "오늘은 아쉬웠어요.",
-        };
-
-        const summary = emotionMap[latest.emotion?.trim()] || "오늘은 평범해요.";
-
-        // content 를 문장/줄 단위로 분리
-        const details = (latest.content || "").split(/\n|\.|,/).map((s: string) => s.trim()).filter((s: string) => s.length > 0);
-
-        setFeedbackData({
-          summary,
-          details,
-          advice: latest.advice || undefined,
-          emotion: latest.emotion?.trim() || "보통",
-        });
-      } else {
-        setFeedbackData(null);
-      }
+      const res = await api.post(url);
+      const latest = res.data;
+      console.log("latest", latest);
+      const map: Record<string, string> = {
+        "보통": "오늘은 평범해요.",
+        "좋음": "오늘은 좋아요.",
+        "나쁨": "오늘은 좋지 않아요.",
+      };
+      const summaryText = map[latest.averageEmotion?.trim() as string] || "오늘은 평범해요.";
+      setFeedbackData({
+        summary: summaryText,
+        details: Array.isArray(latest.feedback) ? latest.feedback : [latest.feedback],
+        advice: latest.advice,
+        emotion: latest.averageEmotion,
+      });
     } catch (error) {
       console.log("/feedback/daily API 실패, 더미 데이터 사용", error);
       // 더미 데이터
@@ -131,11 +117,11 @@ export default function DailyFeedbackPage1() {
             marginBottom: 12,
             textAlign: 'center'
           }}>
-            {loading ? '로딩 중...' : (feedbackData?.summary || '오늘은 평범해요.')}
+            {loading ? '로딩 중...' : ("오늘은 " + feedbackData?.emotion + "이에요.")}
           </Text>
 
-          {!loading && (feedbackData?.details || []).map((line: string, idx: number) => (
-            <Text key={idx} style={{
+          {!loading && (
+              <Text style={{
               fontSize: 14,
               fontFamily: 'Pretendard-Regular',
               color: '#6B7684',
@@ -143,9 +129,9 @@ export default function DailyFeedbackPage1() {
               lineHeight: 20,
               marginBottom: 8
             }}>
-              {line}
+              {feedbackData?.details}
             </Text>
-          ))}
+          )}
         </View>
 
         <Button 
